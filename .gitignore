@@ -1,0 +1,16 @@
+# vscode settings
+.vscode/
+!.vscode/settings.json
+
+# windows
+*.dll
+*.lib
+*.exe
+
+# osx/linux
+*.a
+*.so
+*.out
+
+# test
+test/

@@ -1,6 +1,4 @@
-#include <stdint.h>
-// extern int32_t __stdcall Initialize(int32_t p0);
+#include "app.h"
 
-extern int32_t __stdcall Initialize(int32_t p0){
-	return 0;
-}
+extern int32_t __stdcall Initialize(int32_t p0) { return Init(p0); }
+extern int32_t __stdcall onEnable() {return Enable();}
