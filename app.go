@@ -1,17 +1,18 @@
 // 您的应用的代码写在这里
 package main
 
-import "C"
+import "C" 
+
 import (
+
 )
 
+//AppID 需要修改为你的插件的appid
 const AppID = "your.app.id"
 
-//export Enable
+//Enable 在插件启动时被调用一次
 func Enable() int32 {
-	code,err:=SendPrivateMsg(1624188026, "test")
-	if err!=nil{
-		
-	}
+	AddLog(3000, "Debug", "res")
+	
 	return 0
 }
