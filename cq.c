@@ -2,6 +2,11 @@
 #include "app.h"
 #include "cq.h"
 
+extern char *__stdcall AppInfo()
+{
+    return _appinfo();
+}
+
 int32_t ac;
 CQEVENT Initialize(int32_t access_code)
 {
@@ -16,7 +21,7 @@ CQEVENT EVENT_ON_ENABLE() { return _on_enable(); }
 
 //apis
 
-int32_t CQ_addLog(GoInt32 priority, const char *type, const char *reason)
+int32_t CQ_addLog(int32_t priority, char *type, char *reason)
 {
     int32_t ret = CQ_addLog_Ptr(ac, priority, type, reason);
     free(type); //释放字符串内存
@@ -24,7 +29,7 @@ int32_t CQ_addLog(GoInt32 priority, const char *type, const char *reason)
     return ret;
 }
 
-int32_t CQ_sendPrivateMsg(GoInt64 qq, const char *msg)
+int32_t CQ_sendPrivateMsg(int64_t qq, char *msg)
 {
     int32_t ret = CQ_sendPrivateMsg_Ptr(ac, qq, msg);
     free(msg);
