@@ -9,7 +9,7 @@
     "event": [ // 事件列表，同一事件类型可重复定义（发布前请删除无用事件）
         {
             "name": "应用启动",
-            "function": "on_Enable",
+            "function": "EVENT_ON_ENABLE",
             "type": 1003,
             "priority": 30000,
             "id": 1
