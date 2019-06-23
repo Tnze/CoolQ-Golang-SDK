@@ -1,8 +1,8 @@
 // +build windows,386,cgo
 
 #include <windows.h>
-#include "app.h"
 #include "cq.h"
+#include "events.h"
 
 #define LoadAPI(Name) Name##_Ptr = (Name##_Type)GetProcAddress(hmod, #Name)
 
@@ -54,7 +54,7 @@ CQEVENT Initialize(int32_t access_code)
 
 CQEVENT EVENT_ON_ENABLE() { return _on_enable(); }
 CQEVENT EVENT_ON_DISABLE() { return _on_disable(); }
-CQEVENT EVENT_ON_PRIVATE_MSG(int subType, int msgId, long long fromQQ, const char *msg, int font) { return _on_private_msg(subType, msgId, fromQQ, msg, font); }
+CQEVENT EVENT_ON_PRIVATE_MSG(int32_t subType, int32_t msgId, int64_t fromQQ, char *msg, int32_t font) { return _on_private_msg(subType, msgId, fromQQ, msg, font); }
 
 //apis，由于Go语言CGO不支持直接调用C函数指针，我们只能用C函数再包一层。
 int32_t CQ_addLog(int32_t priority, char *type, char *content)

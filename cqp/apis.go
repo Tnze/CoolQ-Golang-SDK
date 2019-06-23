@@ -54,7 +54,7 @@ func SendLike(qq int64) int32 {
 
 //SendLike2 发送赞2
 func SendLike2(qq int64, times int32) int32 {
-	return int32(C.CQ_sendLike(
+	return int32(C.CQ_sendLikeV2(
 		C.int64_t(qq), C.int32_t(times),
 	))
 }

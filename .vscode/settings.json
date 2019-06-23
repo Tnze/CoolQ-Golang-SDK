@@ -8,5 +8,6 @@
         "GOARCH":"386",
         "CGO_ENABLED":"1",
     },
-    "go.inferGopath": false
+    "go.inferGopath": false,
+    "go.formatTool": "goimports"
 }

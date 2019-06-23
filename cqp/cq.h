@@ -18,7 +18,7 @@ int32_t ac; //AccessCode
 CQEVENT Initialize(int32_t p0);
 CQEVENT EVENT_ON_ENABLE();
 CQEVENT EVENT_ON_DISABLE();
-CQEVENT EVENT_ON_PRIVATE_MSG(int subType, int msgId, long long fromQQ, const char *msg, int font);
+CQEVENT EVENT_ON_PRIVATE_MSG(int32_t subType, int32_t msgId, int64_t fromQQ, char *msg, int32_t font);
 
 // = = 匹配函数名的正则(?<=CQAPI\(\w+ ?\*?, )\w+
 //apis

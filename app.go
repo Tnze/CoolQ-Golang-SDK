@@ -3,25 +3,15 @@ package main
 
 import "github.com/Tnze/CoolQ-Golang-SDK/cqp"
 
-// AppID 需要修改为你的插件的appid
-const AppID = "your.app.id"
+func main() {} //仅为编译需要，不要在这里写代码，它们不会被执行
 
-// Enable 在插件启动时被调用一次
+func init() {
+	// AppID 需要修改为你的插件的appid
+	cqp.AppID = "your.app.id"
+	cqp.Enable = Enable
+}
+
 func Enable() int32 {
+	cqp.AddLog(cqp.Info, `\u4fe1\u606f`, "\u4fe1\u606f")//TODO 解决中文乱码的问题
 	return 0
-}
-
-// PrivateMsg 在收到私聊消息时被调用
-// - subType	子类型，11/来自好友 1/来自在线状态 2/来自群 3/来自讨论组
-// - msgId		消息ID
-// - fromQQ		来源QQ
-// - msg		消息内容
-// - font		字体
-// 返回非零值,消息将被拦截,最高优先不可拦截
-func PrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) int32 {
-
-}
-
-func main(){
-	
 }
