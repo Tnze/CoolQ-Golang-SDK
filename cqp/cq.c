@@ -56,7 +56,7 @@ CQEVENT EVENT_ON_ENABLE() { return _on_enable(); }
 CQEVENT EVENT_ON_DISABLE() { return _on_disable(); }
 CQEVENT EVENT_ON_PRIVATE_MSG(int32_t subType, int32_t msgId, int64_t fromQQ, char *msg, int32_t font) { return _on_private_msg(subType, msgId, fromQQ, msg, font); }
 
-//apis，由于Go语言CGO不支持直接调用C函数指针，我们只能用C函数再包一层。
+//apis，由于Go语言CGO不支持直接调用C函数指针，我们只能用C函数再包一层。顺便做一些内存的释放工作
 int32_t CQ_addLog(int32_t priority, char *type, char *content)
 {
     int32_t ret = CQ_addLog_Ptr(ac, priority, type, content);
