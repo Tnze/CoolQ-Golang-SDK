@@ -1,11 +1,11 @@
 # CoolQ Golang SDK
 Native 酷Q插件 Go语言SDK  
-文档:[![GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp?status.svg)](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp)  
+
+**详细的文档！** [![GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp?status.svg)](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp)  
+
 通过直接把Go代码编译成dll，省去从前Go语言SDK的网络调用过程，大大提高程序运行效率。
 
-目前已经摸索出如何把Go代码编译成dll供酷Q调用了，包括导出函数监听事件或者调用酷Q的函数。
-目前demo中，文件略显杂乱，还没想到一个好的方式提供一个优雅的接口给大家编写插件，
-该项目将会继续完善，最终作出一个简单易用的酷Q**Go语言SDK** 。
+该项目将会继续完善，把事件和API全部导出，最终得到一个简单易用的酷Q**Go语言SDK** 。
 
 也非常欢迎有技术有精力的同学帮忙完善～
 
