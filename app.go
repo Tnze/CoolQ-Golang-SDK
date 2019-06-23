@@ -12,6 +12,6 @@ func init() {
 }
 
 func Enable() int32 {
-	cqp.AddLog(cqp.Info, `\u4fe1\u606f`, "\u4fe1\u606f")//TODO 解决中文乱码的问题
+	cqp.AddLog(cqp.Info, `调试`, "中文测试 + English test") //TODO 解决中文乱码的问题
 	return 0
 }
