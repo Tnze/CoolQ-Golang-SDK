@@ -1,5 +1,3 @@
-// +build windows,386,cgo
-
 package cqp
 
 // #include "cq.h"
