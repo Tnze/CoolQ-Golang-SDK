@@ -13,6 +13,20 @@
             "type": 1003,
             "priority": 30000,
             "id": 1
+        },
+        {
+            "name": "应用停止",
+            "function": "EVENT_ON_DISABLE",
+            "type": 1003,
+            "priority": 30000,
+            "id": 1
+        },
+        {
+            "name": "私聊消息",
+            "function": "EVENT_ON_PRIVATE_MSG",
+            "type": 21,
+            "priority": 30000,
+            "id": 1
         }
     ],
     "menu": [ // 设置菜单（发布前请删除无用菜单，如果无需设置菜单请全部删除）
