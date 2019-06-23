@@ -1,3 +1,5 @@
+// +build windows,386,cgo
+
 #include <stdint.h>
 #include <stdlib.h>
 

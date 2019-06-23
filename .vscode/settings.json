@@ -7,5 +7,6 @@
         "GOOS":"windows",
         "GOARCH":"386",
         "CGO_ENABLED":"1",
-    }
+    },
+    "go.inferGopath": false
 }

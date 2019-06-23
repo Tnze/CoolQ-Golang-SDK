@@ -1,7 +1,7 @@
 // 您的应用的代码写在这里
 package main
 
-import ()
+import "github.com/Tnze/CoolQ-Golang-SDK/cqp"
 
 // AppID 需要修改为你的插件的appid
 const AppID = "your.app.id"
@@ -20,4 +20,8 @@ func Enable() int32 {
 // 返回非零值,消息将被拦截,最高优先不可拦截
 func PrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) int32 {
 
+}
+
+func main(){
+	
 }

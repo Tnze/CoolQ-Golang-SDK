@@ -1,3 +1,5 @@
+// +build windows,386,cgo
+
 #include <windows.h>
 #include "app.h"
 #include "cq.h"
