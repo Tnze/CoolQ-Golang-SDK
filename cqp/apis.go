@@ -85,7 +85,9 @@ func GetCookies() string {
 // GetRecord 获取语音
 // 需要严格授权
 func GetRecord(file, format string) string {
-	return goString(C.CQ_getRecord(cString(file), cString(format)))
+	return goString(C.CQ_getRecord(
+		cString(file), cString(format),
+	))
 }
 
 // GetCSRFToken 获取CSRF Token
@@ -138,11 +140,112 @@ func SetGroupAdmin(group, qq int64, admin bool) int32 {
 }
 
 //SetGroupSpecialTitle 设置群成员头衔
-func SetGroupSpecialTitle(group, qq int64, title string, timeout int64){
+func SetGroupSpecialTitle(group, qq int64, title string, timeout int64) int32 {
 	return int32(C.CQ_setGroupSpecialTitle(
 		C.int64_t(group),
 		C.int64_t(qq),
 		cString(title),
 		C.int64_t(timeout),
 	))
+}
+
+// SetGroupWholeBan 设置全员禁言
+func SetGroupWholeBan(group int64, ban bool) int32 {
+	return int32(C.CQ_setGroupWholeBan(
+		C.int64_t(group), cBool(ban),
+	))
+}
+
+//SetGroupAnonymousBan 设置群匿名成员禁言
+func SetGroupAnonymousBan(group int64, anonymous string, time int64) int32 {
+	return int32(C.CQ_setGroupAnonymousBan(
+		C.int64_t(group),
+		cString(anonymous),
+		C.int64_t(time),
+	))
+}
+
+//SetGroupAnonymous 设置群匿名是否开启
+func SetGroupAnonymous(group int64, anonymous bool) int32 {
+	return int32(C.CQ_setGroupAnonymous(
+		C.int64_t(group),
+		cBool(anonymous),
+	))
+}
+
+//SetGroupCard 设置群成员名片
+func SetGroupCard(group, qq int64, card string) int32 {
+	return int32(C.CQ_setGroupCard(
+		C.int64_t(group),
+		C.int64_t(qq),
+		cString(card),
+	))
+}
+
+// SetGroupLeave 退出群聊
+func SetGroupLeave(group int64, dissolve bool) int32 {
+	return int32(C.CQ_setGroupLeave(
+		C.int64_t(group), cBool(dissolve),
+	))
+}
+
+func SetDiscussLeave(discuss int64) int32 {
+	return int32(C.CQ_setDiscussLeave(C.int64_t(discuss)))
+}
+
+func SetFriendAddRequest(ReqFeedback string, FeedbackType int32, remark string) int32 {
+	return int32(C.CQ_setFriendAddRequest(
+		cString(ReqFeedback),
+		C.int32_t(FeedbackType),
+		cString(remark),
+	))
+}
+
+func SetGroupAddequest(ReqFeedback string, ReqType, FeedbackType int32) int32 {
+	return int32(C.CQ_setGroupAddRequest(
+		cString(ReqFeedback),
+		C.int32_t(ReqType), C.int32_t(FeedbackType),
+	))
+}
+
+func SetGroupAddequest2(ReqFeedback string, ReqType, FeedbackType int32, reason string) int32 {
+	return int32(C.CQ_setGroupAddRequestV2(
+		cString(ReqFeedback),
+		C.int32_t(ReqType), C.int32_t(FeedbackType),
+		cString(reason),
+	))
+}
+
+func SetFatal(errmsg string) int32 {
+	return int32(C.CQ_setFatal(cString(errmsg)))
+}
+
+func GetGroupMemberInfo(group, qq int64) string {
+	return goString(C.CQ_getGroupMemberInfo(
+		C.int64_t(group), C.int64_t(qq),
+	))
+}
+
+func GetGroupMemberInfo2(group, qq int64, noCatch bool) string {
+	return goString(C.CQ_getGroupMemberInfoV2(
+		C.int64_t(group), C.int64_t(qq), cBool(noCatch),
+	))
+}
+
+func GetStrangerInfo(qq int64, noCatch bool) string {
+	return goString(C.CQ_getStrangerInfo(
+		C.int64_t(qq), cBool(noCatch),
+	))
+}
+
+func GetGroupMemberList(group int64) string {
+	return goString(C.CQ_getGroupMemberList(C.int64_t(group)))
+}
+
+func GetGroupList() string {
+	return goString(C.CQ_getGroupList())
+}
+
+func DeleteMsg(msgID int64) int32 {
+	return int32(C.CQ_deleteMsg(C.int64_t(msgID)))
 }

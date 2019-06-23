@@ -52,5 +52,5 @@ CQAPI(char *, CQ_getGroupMemberInfo, int64_t GroupNum, int64_t QQID);
 CQAPI(char *, CQ_getGroupMemberInfoV2, int64_t GroupNum, int64_t QQ, int32_t NoCatch);
 CQAPI(char *, CQ_getStrangerInfo, int64_t QQ, int32_t NoCatch);
 CQAPI(char *, CQ_getGroupMemberList, int64_t GroupNum);
-CQAPI(char *, CQ_getGroupList, int32_t AuthCode);
+CQAPI(char *, CQ_getGroupList);
 CQAPI(int32_t, CQ_deleteMsg, int64_t MsgID);
