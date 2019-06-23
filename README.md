@@ -20,6 +20,9 @@ TODO list:
 - [ ] 导出全部Event
 
 # 食用方法
+
+> 只要`import "github.com/Tnze/CoolQ-Golang-SDK/cqp"`并且使用恰当的编译命令即可成功编译出酷Q插件，`app.go`只是一个最简单的demo
+
 1. 先clone该项目
 2. 检查是否安装了go语言编译器：`go version`
 3. 检查是否安装了gcc编译器（cgo需要gcc编译器）：`gcc --version`

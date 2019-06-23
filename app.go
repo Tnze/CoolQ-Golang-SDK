@@ -8,10 +8,4 @@ func main() {} //仅为编译需要，不要在这里写代码，它们不会被
 func init() {
 	// AppID 需要修改为你的插件的appid
 	cqp.AppID = "your.app.id"
-	cqp.Enable = onEnable
-}
-
-func onEnable() int32 {
-	cqp.AddLog(cqp.Info, `调试`, "中文测试 + English test") //TODO 解决中文乱码的问题
-	return 0
 }
