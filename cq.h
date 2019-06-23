@@ -3,8 +3,9 @@
 
 #define CQEVENT extern int32_t __stdcall
 
-#define CQAPI(RetType, Name, ...)                            \
-    RetType(__stdcall *Name##_Ptr)(int32_t ac, __VA_ARGS__); \
+#define CQAPI(RetType, Name, ...)                                       \
+    typedef RetType(__stdcall *Name##_Type)(int32_t ac, ##__VA_ARGS__); \
+    Name##_Type Name##_Ptr;                                             \
     RetType Name(__VA_ARGS__)
 
 extern char *__stdcall AppInfo();
@@ -44,8 +45,8 @@ CQAPI(int32_t, CQ_setGroupAddRequest, char *ReqFeedback, int32_t ReqType, int32_
 CQAPI(int32_t, CQ_setGroupAddRequestV2, char *ReqFeedback, int32_t ReqType, int32_t FbType, char *reason);
 CQAPI(int32_t, CQ_setFatal, char *errmsg);
 CQAPI(char *, CQ_getGroupMemberInfo, int64_t GroupNum, int64_t QQID);
-CQAPI(char *, CQ_getGroupMemberInfoV2, int64_t GroupNum, int64_t QQID, int32_t NoCatch);
-CQAPI(char *, CQ_getStrangerInfo, int64_t QQID, int32_t NoCatch);
+CQAPI(char *, CQ_getGroupMemberInfoV2, int64_t GroupNum, int64_t QQ, int32_t NoCatch);
+CQAPI(char *, CQ_getStrangerInfo, int64_t QQ, int32_t NoCatch);
 CQAPI(char *, CQ_getGroupMemberList, int64_t GroupNum);
 CQAPI(char *, CQ_getGroupList, int32_t AuthCode);
-CQAPI(int32_t, CQ_deleteMsg, int64_t MsgId);
+CQAPI(int32_t, CQ_deleteMsg, int64_t MsgID);

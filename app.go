@@ -9,5 +9,6 @@ const AppID = "your.app.id"
 
 //Enable 在插件启动时被调用一次
 func Enable() int32 {
+	AddLog(0, "Debug", "Test logggggger!!!")
 	return 0
 }

@@ -2,7 +2,7 @@
 #include "app.h"
 #include "cq.h"
 
-#define LoadAPI(Name) Name##_Ptr = GetProcAddress(hmod, #Name)
+#define LoadAPI(Name) Name##_Ptr = (Name##_Type)GetProcAddress(hmod, #Name)
 
 extern char *__stdcall AppInfo()
 {
@@ -52,23 +52,7 @@ CQEVENT Initialize(int32_t access_code)
 
 CQEVENT EVENT_ON_ENABLE() { return _on_enable(); }
 
-//apis，由于CGO不支持Go语言直接调用C函数指针，我们只能用C函数再包一层
-
-int32_t CQ_addLog(int32_t priority, char *type, char *reason)
-{
-    int32_t ret = CQ_addLog_Ptr(ac, priority, type, reason);
-    free(type); //释放字符串内存
-    free(reason);
-    return ret;
-}
-
-int32_t CQ_sendPrivateMsg(int64_t qq, char *msg)
-{
-    int32_t ret = CQ_sendPrivateMsg_Ptr(ac, qq, msg);
-    free(msg);
-    return ret;
-}
-
+//apis，由于Go语言CGO不支持直接调用C函数指针，我们只能用C函数再包一层。
 int32_t CQ_addLog(int32_t priority, char *type, char *content)
 {
     int32_t ret = CQ_addLog_Ptr(ac, priority, type, content);
@@ -86,7 +70,7 @@ int32_t CQ_sendGroupMsg(int64_t GroupNum, char *msg)
 {
     int32_t ret = CQ_sendGroupMsg_Ptr(ac, GroupNum, msg);
     free(msg);
-    return ret
+    return ret;
 }
 int32_t CQ_sendDiscussMsg(int64_t DiscussNum, char *msg)
 {
@@ -165,7 +149,7 @@ int32_t CQ_setGroupCard(int64_t GroupNum, int64_t QQ, char *NewCard)
 {
     int32_t ret = CQ_setGroupCard_Ptr(ac, GroupNum, QQ, NewCard);
     free(NewCard);
-    return;
+    return ret;
 }
 int32_t CQ_setGroupLeave(int64_t GroupNum, int32_t dissolve)
 {
@@ -186,14 +170,14 @@ int32_t CQ_setGroupAddRequest(char *ReqFeedback, int32_t ReqType, int32_t FbType
 {
     int32_t ret = CQ_setGroupAddRequest_Ptr(ac, ReqFeedback, ReqType, FbType);
     free(ReqFeedback);
-    return;
+    return ret;
 }
 int32_t CQ_setGroupAddRequestV2(char *ReqFeedback, int32_t ReqType, int32_t FbType, char *reason)
 {
     int32_t ret = CQ_setGroupAddRequestV2_Ptr(ac, ReqFeedback, ReqType, FbType, reason);
     free(ReqFeedback);
     free(reason);
-    return;
+    return ret;
 }
 int32_t CQ_setFatal(char *errmsg)
 {
