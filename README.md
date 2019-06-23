@@ -16,7 +16,8 @@ TODO list:
 - [x] 导出函数供酷Q调用
 - [x] 调用酷Q提供的函数
 - [X] 编写使用文档
-- [ ] 完善API和Event
+- [x] 导出全部API
+- [ ] 导出全部Event
 
 # 食用方法
 1. 先clone该项目

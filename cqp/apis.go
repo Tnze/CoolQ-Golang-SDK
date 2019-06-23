@@ -113,7 +113,7 @@ func GetLoginNick() string {
 }
 
 //SetGroupKick 将群成员踢出群聊
-func SetGroupKick(group, qq int64, rejectNextTime bool) int32 {
+func SetGroupKick(group, qq int64, rej bool) int32 {
 	return int32(C.CQ_setGroupKick(
 		C.int64_t(group),
 		C.int64_t(qq),
@@ -126,7 +126,7 @@ func SetGroupBan(group, qq, bantime int64) int32 {
 	return int32(C.CQ_setGroupBan(
 		C.int64_t(group),
 		C.int64_t(qq),
-		C.int64_t(time),
+		C.int64_t(bantime),
 	))
 }
 
