@@ -58,7 +58,7 @@ func onDisable() int32 {
 		printErr(err)
 		return -1
 	}
-	err := ioutil.WriteFile(file, petsdata, 0666)
+	err = ioutil.WriteFile(file, petsdata, 0666)
 	if err != nil {
 		printErr(err)
 		return -1
@@ -98,9 +98,9 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	case msg == "喂食":
 		if ok && pet.name != "" {
 			if pet.dead {
-				cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你曾经有过宠物，记得吗？可惜它已经死了", fromQQ, pet.name))
+				cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你曾经有过宠物，记得吗？可惜它已经死了", fromQQ))
 			} else {
-				cqp.AddLog(cqp.Info, "喂食", fmt.Sprintf("%d把%s撑死了", fromQQ, name))
+				cqp.AddLog(cqp.Info, "喂食", fmt.Sprintf("%d把%s撑死了", fromQQ, pet.name))
 				cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你喂%s东西吃，ta吃得很饱，然后就撑死了", fromQQ, pet.name))
 				pet.dead = true
 				pets[group(fromGroup)][qq(fromQQ)] = pet
