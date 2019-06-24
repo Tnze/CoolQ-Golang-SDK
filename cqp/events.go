@@ -1,6 +1,6 @@
 package cqp
 
-// #include "cq.h"
+// #include "events.h"
 import "C"
 
 //export _appinfo
@@ -30,6 +30,14 @@ func _on_private_msg(subType, msgID int32, fromQQ int64, msg *C.char, font int32
 	return PrivateMsg(subType, msgID, fromQQ, goString(msg), font)
 }
 
+//export _on_group_msg
+func _on_group_msg( subType, msgID int32,  fromGroup , fromQQ int64, fromAnonymous, msg *C.char, font int32) int32{
+	if GroupMsg ==nil{
+		return 0
+	}
+	return GroupMsg(subType, msgID, fromGroup, fromQQ, goString(fromAnonymous), goString(msg), font)
+}
+
 // AppID 插件的AppID。
 // 务必在init函数内为这个变量赋值，酷Q加载插件时会读取这个值。
 // 为了保证其唯一性，酷Q定义了AppID的规则，即开发者域名反写.应用英文名。
@@ -47,3 +55,7 @@ var Disable func() int32
 // subType为子类型，可选的值有，11:来自好友 1:来自在线状态 2:来自群 3:来自讨论组。
 // 若返回非0值，消息将被拦截，最高优先不可拦截。
 var PrivateMsg func(subType, msgID int32, fromQQ int64, msg string, font int32) int32
+
+// GroupMsg 在收到群聊消息时被调用
+// subType目前固定为1
+var GroupMsg func( subType, msgID int32,  fromGroup , fromQQ int64, fromAnonymous, msg string, font int32) int32

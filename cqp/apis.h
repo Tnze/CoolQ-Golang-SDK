@@ -1,9 +1,8 @@
 // +build windows,386,cgo
 
+#include <windows.h>
 #include <stdint.h>
 #include <stdlib.h>
-
-#define CQEVENT extern int32_t __stdcall
 
 #define CQAPI(RetType, Name, ...)                                       \
     typedef RetType(__stdcall *Name##_Type)(int32_t ac, ##__VA_ARGS__); \

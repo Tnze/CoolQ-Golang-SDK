@@ -27,6 +27,13 @@
             "type": 21,
             "priority": 30000,
             "id": 3
+        },
+        {
+            "name": "群聊消息",
+            "function": "EVENT_ON_GROUP_MSG",
+            "type": 2,
+            "priority": 30000,
+            "id": 4
         }
     ],
     "menu": [

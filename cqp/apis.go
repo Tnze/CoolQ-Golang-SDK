@@ -1,6 +1,6 @@
 package cqp
 
-// #include "cq.h"
+// #include "apis.h"
 import "C"
 import sc "golang.org/x/text/encoding/simplifiedchinese"
 
