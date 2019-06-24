@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Tnze/CoolQ-Golang-SDK/cqp"
+	"github.com/Tnze/CoolQ-Golang-SDK/demo/DogPet/corpus"
 )
 
 func main() {}
@@ -23,26 +24,58 @@ func init() {
 func onEnable() int32 {
 	defer handleErr()
 	// 读取pets.json
-	file, err := petsFile()
+	err := readPets()
 	if err != nil {
 		printErr(err)
 		return -1
 	}
-	cqp.AddLog(cqp.Info, "调试", "pets.json文件路径："+file)
-	petsdata, err := ioutil.ReadFile(file)
-	if os.IsNotExist(err) {
-		return 0
-	} else if err != nil {
-		printErr(err)
-		return -1
-	}
-	err = json.Unmarshal(petsdata, &pets)
+
+	//读语料库
+	err = readCorpus()
 	if err != nil {
 		printErr(err)
 		return -1
 	}
 
 	return 0
+}
+
+func readPets() error {
+	file, err := getFile("pets.json")
+	if err != nil {
+		return err
+	}
+	cqp.AddLog(cqp.Debug, "调试", "pets.json文件路径："+file)
+	petsdata, err := ioutil.ReadFile(file)
+	if os.IsNotExist(err) {
+		return nil
+	} else if err != nil {
+		return err
+	}
+	err = json.Unmarshal(petsdata, &pets)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func readCorpus() error {
+	file, err := getFile("corpus.json")
+	if err != nil {
+		return err
+	}
+	cqp.AddLog(cqp.Debug, "调试", "corpus.json文件路径："+file)
+	petsdata, err := ioutil.ReadFile(file)
+	if os.IsNotExist(err) {
+		return nil
+	} else if err != nil {
+		return err
+	}
+	err = json.Unmarshal(petsdata, &corpus.Corpus)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func onDisable() int32 {
@@ -53,7 +86,7 @@ func onDisable() int32 {
 		printErr(err)
 		return -1
 	}
-	file, err := petsFile()
+	file, err := getFile("pets.json")
 	if err != nil {
 		printErr(err)
 		return -1
@@ -74,41 +107,64 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 	}
 
 	pet, ok := pets[group(fromGroup)][qq(fromQQ)]
+
+	words := corpus.Words{
+		QQ:    fromQQ,
+		Group: fromGroup,
+		Name:  pet.Name,
+		Birth: pet.Birth,
+	}
+
+	var (
+		s   string
+		err error
+	)
 	switch {
 	case strings.HasPrefix(msg, "领养 "):
 		var name string
 		n, err := fmt.Sscanf(msg, "领养 %s", &name)
 		if n != 1 || err != nil {
 			cqp.AddLog(cqp.Debug, "领养", "领养指令不正确: "+msg)
+			return 0
 		}
 
-		if ok && pet.name != "" {
-			if pet.dead {
-				cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你有过宠物，但是它死了，你不配拥有宠物", fromQQ))
+		if ok && pet.Name != "" {
+			if pet.Dead {
+				s, err = words.Execute("有过但死了")
 			} else {
-				cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你已经有宠物了，它的名字是%s", fromQQ, pet.name))
+				s, err = words.Execute("已经领养了")
 			}
 		} else {
+			pet.Name = name
+			pet.Birth = time.Now()
+			words.Name = pet.Name
+			words.Birth = pet.Birth
 			cqp.AddLog(cqp.Info, "领养", fmt.Sprintf("%d领养了%s", fromQQ, name))
-			pet.name = name
-			pet.birth = time.Now()
 			pets[group(fromGroup)][qq(fromQQ)] = pet
-			cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你领养了%s，快输入“喂食”来给它喂食吧！", fromQQ, name))
+			s, err = words.Execute("成功领养")
 		}
 	case msg == "喂食":
-		if ok && pet.name != "" {
-			if pet.dead {
-				cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你曾经有过宠物，记得吗？可惜它已经死了", fromQQ))
+		if ok && pet.Name != "" {
+			if pet.Dead {
+				s, err = words.Execute("死了还喂")
 			} else {
-				cqp.AddLog(cqp.Info, "喂食", fmt.Sprintf("%d把%s撑死了", fromQQ, pet.name))
-				cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你喂%s东西吃，ta吃得很饱，然后就撑死了", fromQQ, pet.name))
-				pet.dead = true
+				cqp.AddLog(cqp.Info, "喂食", fmt.Sprintf("%d把%s撑死了", fromQQ, pet.Name))
+				s, err = words.Execute("把它喂死了")
+				pet.Dead = true
 				pets[group(fromGroup)][qq(fromQQ)] = pet
 			}
 		} else {
-			cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你还没有宠物", fromQQ))
+			s, err = words.Execute("还没领养")
 		}
+	default:
+		return 0
 	}
+
+	if err != nil {
+		printErr(err)
+		return -1
+	}
+	cqp.SendGroupMsg(fromGroup, s)
 	return 0
 }
 
@@ -120,9 +176,9 @@ var pets = make(
 )
 
 type pet struct {
-	name  string
-	birth time.Time
-	dead  bool
+	Name  string
+	Birth time.Time
+	Dead  bool
 }
 
 //打印错误到日志
@@ -130,11 +186,11 @@ func printErr(err error) {
 	cqp.AddLog(cqp.Error, "错误", err.Error())
 }
 
-//获取pets.json文件的路径，若路径不存在则顺便创建
-func petsFile() (string, error) {
+//获取插件文件的路径，若路径不存在则顺便创建
+func getFile(name string) (string, error) {
 	appdir := cqp.GetAppDir()
 	err := os.MkdirAll(appdir, os.ModeDir)
-	return filepath.Join(appdir, "pets.json"), err
+	return filepath.Join(appdir, name), err
 }
 
 func handleErr() {
