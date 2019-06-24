@@ -4,6 +4,12 @@
 
 #define CQEVENT extern int32_t __stdcall
 
+//events
+CQEVENT Initialize(int32_t p0);
+CQEVENT EVENT_ON_ENABLE();
+CQEVENT EVENT_ON_DISABLE();
+CQEVENT EVENT_ON_PRIVATE_MSG(int32_t subType, int32_t msgId, int64_t fromQQ, char *msg, int32_t font);
+
 extern char *_appinfo();
 extern int32_t _on_enable();
 extern int32_t _on_disable();

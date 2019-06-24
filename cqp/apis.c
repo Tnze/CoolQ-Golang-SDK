@@ -1,6 +1,7 @@
 // +build windows,386,cgo
 
 #include "apis.h"
+#include "events.h"
 
 #define LoadAPI(Name) Name##_Ptr = (Name##_Type)GetProcAddress(hmod, #Name)
 
