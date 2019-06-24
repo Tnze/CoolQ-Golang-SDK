@@ -94,11 +94,11 @@ func onGroupMsg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, ms
 			cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你领养了%s，快输入“喂食”来给它喂食吧！", fromQQ, name))
 		}
 	case strings.HasPrefix(msg, "喂食"):
-		if ok{
+		if ok {
 			cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d] %s吃得很饱，然后撑死了", fromQQ, pet.name))
-		pet.dead = true
-		pets[group(fromGroup)][qq(fromQQ)] = pet
-		}else{
+			pet.dead = true
+			pets[group(fromGroup)][qq(fromQQ)] = pet
+		} else {
 			cqp.SendGroupMsg(fromGroup, fmt.Sprintf("[CQ:at,qq=%d]你还没有宠物", fromQQ))
 		}
 	}

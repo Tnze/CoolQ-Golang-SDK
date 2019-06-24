@@ -31,8 +31,8 @@ func _on_private_msg(subType, msgID int32, fromQQ int64, msg *C.char, font int32
 }
 
 //export _on_group_msg
-func _on_group_msg( subType, msgID int32,  fromGroup , fromQQ int64, fromAnonymous, msg *C.char, font int32) int32{
-	if GroupMsg ==nil{
+func _on_group_msg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg *C.char, font int32) int32 {
+	if GroupMsg == nil {
 		return 0
 	}
 	return GroupMsg(subType, msgID, fromGroup, fromQQ, goString(fromAnonymous), goString(msg), font)
@@ -58,4 +58,4 @@ var PrivateMsg func(subType, msgID int32, fromQQ int64, msg string, font int32) 
 
 // GroupMsg 在收到群聊消息时被调用
 // subType目前固定为1
-var GroupMsg func( subType, msgID int32,  fromGroup , fromQQ int64, fromAnonymous, msg string, font int32) int32
+var GroupMsg func(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, msg string, font int32) int32
