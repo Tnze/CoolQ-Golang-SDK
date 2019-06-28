@@ -23,8 +23,8 @@ TODO list:
 > 只要`import "github.com/Tnze/CoolQ-Golang-SDK/cqp"`并且使用恰当的编译命令即可成功编译出酷Q插件，`app.go`只是一个最简单的demo
 
 1. 先clone该项目
-2. 检查是否安装了go语言编译器：`go version`
-3. 检查是否安装了gcc编译器（cgo需要gcc编译器）：`gcc --version`
+2. 检查是否安装了[go语言编译器](https://golang.google.cn)：`go version`
+3. 检查是否安装了[gcc编译器](http://tdm-gcc.tdragon.net)（cgo需要gcc编译器）：`gcc --version`
 4. 运行`.\build.bat`编译，检查是否有生成*app.dll*
 5. 将*app.dll*和*app.json*复制到酷Q目录下，检查是否能成功加载
 6. 在*app.go* 内编写你的插件，然后重新编译、测试
