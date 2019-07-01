@@ -8,33 +8,103 @@
     "description": "Golang酷Q样例应用(V9应用机制)",
     "event": [ // 事件列表，同一事件类型可重复定义（发布前请删除无用事件）
         {
-            "name": "应用启动", // 事件名称,随意
-            "function": "EVENT_ON_ENABLE", // 事件对应函数，在cq.h和cq.c内声明和定义
-            "type": 1003, // 事件类型,请参考C++SDK的: https://github.com/MikuPy2001/CQPCPPSDK/blob/master/inculde/CQEVE.h
-            "priority": 30000, // 事件优先级(参见 https://d.cqp.me/Pro/开发/事件信息#priority)
-            "id": 1 // 事件ID，全插件唯一，这意味着您将可以使同一事件类型对应多个事件
-        },
-        {
-            "name": "应用停止",
-            "function": "EVENT_ON_DISABLE",
+            "id": 1003,
             "type": 1003,
-            "priority": 30000,
-            "id": 2
+            "name": "插件启用",
+            "priority": 20000,
+            "function": "EVENT_ON_ENABLE"
         },
         {
+            "id": 1004,
+            "type": 1004,
+            "name": "插件停用",
+            "priority": 20000,
+            "function": "EVENT_ON_DISABLE"
+        },
+        // {
+        //     "id": 1001,
+        //     "type": 1001,
+        //     "name": "酷Q启动",
+        //     "priority": 20000,
+        //     "function": "cq_coolq_start"
+        // },
+        // {
+        //     "id": 1002,
+        //     "type": 1002,
+        //     "name": "酷Q退出",
+        //     "priority": 20000,
+        //     "function": "cq_coolq_exit"
+        // },
+        {
+            "id": 1,
+            "type": 21,
             "name": "私聊消息",
             "function": "EVENT_ON_PRIVATE_MSG",
-            "type": 21,
-            "priority": 30000,
-            "id": 3
+            "priority": 20000
         },
         {
-            "name": "群聊消息",
-            "function": "EVENT_ON_GROUP_MSG",
+            "id": 2,
             "type": 2,
-            "priority": 30000,
-            "id": 4
-        }
+            "name": "群消息",
+            "function": "EVENT_ON_GROUP_MSG",
+            "priority": 20000
+        } //,
+        // {
+        //     "id": 3,
+        //     "type": 4,
+        //     "name": "讨论组消息",
+        //     "function": "cq_event_discuss_msg",
+        //     "priority": 20000
+        // },
+        // {
+        //     "id": 4,
+        //     "type": 11,
+        //     "name": "群文件上传",
+        //     "function": "cq_event_group_upload",
+        //     "priority": 20000
+        // },
+        // {
+        //     "id": 5,
+        //     "type": 101,
+        //     "name": "群管理员变动",
+        //     "function": "cq_event_group_admin",
+        //     "priority": 20000
+        // },
+        // {
+        //     "id": 6,
+        //     "type": 102,
+        //     "name": "群成员减少",
+        //     "function": "cq_event_group_member_decrease",
+        //     "priority": 20000
+        // },
+        // {
+        //     "id": 7,
+        //     "type": 103,
+        //     "name": "群成员增加",
+        //     "function": "cq_event_group_member_increase",
+        //     "priority": 20000
+        // },
+        // {
+        //     "id": 10,
+        //     "type": 201,
+        //     "name": "好友添加",
+        //     "function": "cq_event_friend_add",
+        //     "priority": 20000
+        // },
+        // {
+        //     "id": 8,
+        //     "type": 301,
+        //     "name": "加好友请求",
+        //     "function": "cq_event_add_friend_request",
+        //     "priority": 20000
+        // },
+        // {
+        //     "id": 9,
+        //     "type": 302,
+        //     "name": "加群请求／邀请",
+        //     "function": "cq_event_add_group_request",
+        //     "priority": 20000
+        // }
     ],
     "menu": [
         // 由于Go编写GUI有困难，此处暂时空着
@@ -47,29 +117,29 @@
     ],
     "status": [ // 悬浮窗状态
     ],
-    "auth": [ // 应用权限（发布前请删除无用权限）
-        //20,  //[敏感]取Cookies	getCookies / getCsrfToken
-        //30,  //接收语音			getRecord
-        101, //发送群消息			sendGroupMsg
-        103, //发送讨论组消息		sendDiscussMsg
-        106, //发送私聊消息		sendPrivateMsg
-        110, //发送赞				sendLike
-        120, //置群员移除			setGroupKick
-        121, //置群员禁言			setGroupBan
-        122, //置群管理员			setGroupAdmin
-        123, //置全群禁言			setGroupWholeBan
-        124, //置匿名群员禁言		setGroupAnonymousBan
-        125, //置群匿名设置		setGroupAnonymous
-        126, //置群成员名片		setGroupCard
-        //127, //[敏感]置群退出		setGroupLeave
-        128, //置群成员专属头衔	setGroupSpecialTitle
-        130, //取群成员信息		getGroupMemberInfoV2 / getGroupMemberInfo
-        131, //取陌生人信息		getStrangerInfo
-        140, //置讨论组退出		setDiscussLeave
-        150, //置好友添加请求		setFriendAddRequest
-        151, //置群添加请求		setGroupAddRequest
-        160, //取群成员列表		getGroupMemberList
-        161, //取群列表			getGroupList
-        180 //撤回消息			deleteMsg
+    "auth": [
+        // 20, // getCookies / getCsrfToken
+        // 30, // getRecord
+        101, // sendGroupMsg
+        103, // sendDiscussMsg
+        106, // sendPrivateMsg
+        // 110, // sendLikeV2 / sendLike
+        // 120, // setGroupKick
+        // 121, // setGroupBan
+        // 122, // setGroupAdmin
+        // 123, // setGroupWholeBan
+        // 124, // setGroupAnonymousBan
+        // 125, // setGroupAnonymous
+        // 126, // setGroupCard
+        // 127, // setGroupLeave
+        // 128, // setGroupSpecialTitle
+        130, // getGroupMemberInfoV2 / getGroupMemberInfo
+        131, // getStrangerInfo
+        // 140, // setDiscussLeave
+        // 150, // setFriendAddRequest
+        // 151, // setGroupAddRequest
+        160, // getGroupMemberList
+        161, // getGroupList
+        180 // deleteMsg
     ]
 }
