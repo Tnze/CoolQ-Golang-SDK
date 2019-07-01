@@ -4,9 +4,9 @@ Native 酷Q插件 Go语言SDK
 **详细的文档！** [![GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp?status.svg)](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp)  
 
 通过直接把Go代码编译成dll，省去从前Go语言SDK的网络调用过程，大大提高程序运行效率。  
-该项目将会继续完善，把事件全部导出，最终得到一个简单易用的酷Q**Go语言SDK** 。  
+该项目将会继续完善，完成一个简单易用的酷Q**Go语言SDK** 。  
 
-也非常欢迎有技术有精力的同学帮忙完善～（所谓完善，只要把其他事件按现有的样子补上就好了）
+工作量较大，很多API和EVENT没有测试，如果使用中遇到问题，请大胆提issue～
 
 > 喜欢要记得Star哦
 
@@ -16,7 +16,8 @@ TODO list:
 - [x] 调用酷Q提供的函数
 - [x] 编写使用文档
 - [x] 导出全部API
-- [ ] 导出全部Event
+- [x] 导出全部Event
+- [ ] 编写更详细的注释
 
 # 食用方法
 
@@ -29,7 +30,6 @@ TODO list:
 5. 将*app.dll*和*app.json*复制到酷Q目录下，检查是否能成功加载
 6. 在*app.go* 内编写你的插件，然后重新编译、测试
 7. 插件打包等方法与其他SDK相同
-> 有许多事件没有写上去，~~主要是因为我懒~~ ，如果需要，可以轻易地模仿一下现有的来加上去。
 
 ps: 我不知道并发调用酷Q的API会发生什么，不知道酷Q内部有没有锁
 

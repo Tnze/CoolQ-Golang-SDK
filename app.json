@@ -21,20 +21,20 @@
             "priority": 20000,
             "function": "EVENT_ON_DISABLE"
         },
-        // {
-        //     "id": 1001,
-        //     "type": 1001,
-        //     "name": "酷Q启动",
-        //     "priority": 20000,
-        //     "function": "cq_coolq_start"
-        // },
-        // {
-        //     "id": 1002,
-        //     "type": 1002,
-        //     "name": "酷Q退出",
-        //     "priority": 20000,
-        //     "function": "cq_coolq_exit"
-        // },
+        {
+            "id": 1001,
+            "type": 1001,
+            "name": "酷Q启动",
+            "priority": 20000,
+            "function": "EVENT_ON_START"
+        },
+        {
+            "id": 1002,
+            "type": 1002,
+            "name": "酷Q退出",
+            "priority": 20000,
+            "function": "EVENT_ON_EXIT"
+        },
         {
             "id": 1,
             "type": 21,
@@ -48,63 +48,63 @@
             "name": "群消息",
             "function": "EVENT_ON_GROUP_MSG",
             "priority": 20000
-        } //,
-        // {
-        //     "id": 3,
-        //     "type": 4,
-        //     "name": "讨论组消息",
-        //     "function": "cq_event_discuss_msg",
-        //     "priority": 20000
-        // },
-        // {
-        //     "id": 4,
-        //     "type": 11,
-        //     "name": "群文件上传",
-        //     "function": "cq_event_group_upload",
-        //     "priority": 20000
-        // },
-        // {
-        //     "id": 5,
-        //     "type": 101,
-        //     "name": "群管理员变动",
-        //     "function": "cq_event_group_admin",
-        //     "priority": 20000
-        // },
-        // {
-        //     "id": 6,
-        //     "type": 102,
-        //     "name": "群成员减少",
-        //     "function": "cq_event_group_member_decrease",
-        //     "priority": 20000
-        // },
-        // {
-        //     "id": 7,
-        //     "type": 103,
-        //     "name": "群成员增加",
-        //     "function": "cq_event_group_member_increase",
-        //     "priority": 20000
-        // },
-        // {
-        //     "id": 10,
-        //     "type": 201,
-        //     "name": "好友添加",
-        //     "function": "cq_event_friend_add",
-        //     "priority": 20000
-        // },
-        // {
-        //     "id": 8,
-        //     "type": 301,
-        //     "name": "加好友请求",
-        //     "function": "cq_event_add_friend_request",
-        //     "priority": 20000
-        // },
-        // {
-        //     "id": 9,
-        //     "type": 302,
-        //     "name": "加群请求／邀请",
-        //     "function": "cq_event_add_group_request",
-        //     "priority": 20000
-        // }
+        },
+        {
+            "id": 3,
+            "type": 4,
+            "name": "讨论组消息",
+            "function": "EVENT_ON_DISCUSS_MSG",
+            "priority": 20000
+        },
+        {
+            "id": 4,
+            "type": 11,
+            "name": "群文件上传",
+            "function": "EVENT_ON_GROUP_UPLOAD",
+            "priority": 20000
+        },
+        {
+            "id": 5,
+            "type": 101,
+            "name": "群管理员变动",
+            "function": "EVENT_ON_GROUP_ADMIN",
+            "priority": 20000
+        },
+        {
+            "id": 6,
+            "type": 102,
+            "name": "群成员减少",
+            "function": "EVENT_ON_GROUP_MEMBER_DECREASE",
+            "priority": 20000
+        },
+        {
+            "id": 7,
+            "type": 103,
+            "name": "群成员增加",
+            "function": "EVENT_ON_GROUP_MEMBER_INCREASE",
+            "priority": 20000
+        },
+        {
+            "id": 10,
+            "type": 201,
+            "name": "好友添加",
+            "function": "EVENT_ON_FRIEND_ADD",
+            "priority": 20000
+        },
+        {
+            "id": 8,
+            "type": 301,
+            "name": "加好友请求",
+            "function": "EVENT_ON_FRIEND_REQUEST",
+            "priority": 20000
+        },
+        {
+            "id": 9,
+            "type": 302,
+            "name": "加群请求／邀请",
+            "function": "EVENT_ON_GROUP_REQUEST",
+            "priority": 20000
+        }
     ],
     "menu": [
         // 由于Go编写GUI有困难，此处暂时空着
