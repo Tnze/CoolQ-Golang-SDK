@@ -42,17 +42,84 @@ func AddLog(priority int32, logtype, reason string) int32 {
 	))
 }
 
-// SendPrivateMsg 发送私聊消息
-func SendPrivateMsg(qq int64, msg string) int32 {
-	return int32(C.CQ_sendPrivateMsg(
-		C.int64_t(qq), cString(msg),
+//CanSendImage 能否发送图片
+func CanSendImage() bool {
+	return C.CQ_canSendImage() != 0
+}
+
+//CanSendRecord 能否发送语音
+func CanSendRecord() bool {
+	return C.CQ_canSendRecord() != 0
+}
+
+func DeleteMsg(msgID int64) int32 {
+	return int32(C.CQ_deleteMsg(C.int64_t(msgID)))
+}
+
+// GetAppDir 取应用目录
+// 返回的路径末尾带"\"
+func GetAppDir() string {
+	return goString(C.CQ_getAppDirectory())
+}
+
+// GetCookies 获取cookies
+func GetCookies() string {
+	return goString(C.CQ_getCookies())
+}
+
+// GetCSRFToken 获取CSRF Token
+// 需要严格授权
+func GetCSRFToken() int32 {
+	return int32(C.CQ_getCsrfToken())
+}
+
+func GetGroupList() string {
+	return goString(C.CQ_getGroupList())
+}
+
+func GetGroupMemberInfo2(group, qq int64, noCatch bool) string {
+	return goString(C.CQ_getGroupMemberInfoV2(
+		C.int64_t(group), C.int64_t(qq), cBool(noCatch),
 	))
 }
 
-// SendGroupMsg 发送群消息
-func SendGroupMsg(group int64, msg string) int32 {
-	return int32(C.CQ_sendGroupMsg(
-		C.int64_t(group), cString(msg),
+func GetGroupMemberList(group int64) string {
+	return goString(C.CQ_getGroupMemberList(C.int64_t(group)))
+}
+
+func GetImage(file string) string {
+	return goString(C.CQ_getImage(cString(file)))
+}
+
+//GetLoginNick 获取登录号昵称
+func GetLoginNick() string {
+	return goString(C.CQ_getLoginNick())
+}
+
+//GetLoginQQ 获取登陆号QQ
+func GetLoginQQ() int64 {
+	return int64(C.CQ_getLoginQQ())
+}
+
+// GetRecord 获取语音
+// 需要严格授权
+func GetRecord(file, format string) string {
+	return goString(C.CQ_getRecord(
+		cString(file), cString(format),
+	))
+}
+
+// GetRecordV2 获取语音
+// 需要严格授权
+func GetRecordV2(file, format string) string {
+	return goString(C.CQ_getRecordV2(
+		cString(file), cString(format),
+	))
+}
+
+func GetStrangerInfo(qq int64, noCatch bool) string {
+	return goString(C.CQ_getStrangerInfo(
+		C.int64_t(qq), cBool(noCatch),
 	))
 }
 
@@ -60,6 +127,13 @@ func SendGroupMsg(group int64, msg string) int32 {
 func SendDiscussMsg(discuss int64, msg string) int32 {
 	return int32(C.CQ_sendDiscussMsg(
 		C.int64_t(discuss), cString(msg),
+	))
+}
+
+// SendGroupMsg 发送群消息
+func SendGroupMsg(group int64, msg string) int32 {
+	return int32(C.CQ_sendGroupMsg(
+		C.int64_t(group), cString(msg),
 	))
 }
 
@@ -75,120 +149,19 @@ func SendLike2(qq int64, times int32) int32 {
 	))
 }
 
-// GetCookies 获取cookies
-func GetCookies() string {
-	return goString(C.CQ_getCookies())
-}
-
-// GetRecord 获取语音
-// 需要严格授权
-func GetRecord(file, format string) string {
-	return goString(C.CQ_getRecord(
-		cString(file), cString(format),
-	))
-}
-
-// GetCSRFToken 获取CSRF Token
-// 需要严格授权
-func GetCSRFToken() int32 {
-	return int32(C.CQ_getCsrfToken())
-}
-
-// GetAppDir 取应用目录
-// 返回的路径末尾带"\"
-func GetAppDir() string {
-	return goString(C.CQ_getAppDirectory())
-}
-
-//GetLoginQQ 获取登陆号QQ
-func GetLoginQQ() int64 {
-	return int64(C.CQ_getLoginQQ())
-}
-
-//GetLoginNick 获取登录号昵称
-func GetLoginNick() string {
-	return goString(C.CQ_getLoginNick())
-}
-
-//SetGroupKick 将群成员踢出群聊
-func SetGroupKick(group, qq int64, rej bool) int32 {
-	return int32(C.CQ_setGroupKick(
-		C.int64_t(group),
-		C.int64_t(qq),
-		cBool(rej),
-	))
-}
-
-//SetGroupBan 设置群成员禁言
-func SetGroupBan(group, qq, bantime int64) int32 {
-	return int32(C.CQ_setGroupBan(
-		C.int64_t(group),
-		C.int64_t(qq),
-		C.int64_t(bantime),
-	))
-}
-
-//SetGroupAdmin 设置群管理员
-func SetGroupAdmin(group, qq int64, admin bool) int32 {
-	return int32(C.CQ_setGroupAdmin(
-		C.int64_t(group),
-		C.int64_t(qq),
-		cBool(admin),
-	))
-}
-
-//SetGroupSpecialTitle 设置群成员头衔
-func SetGroupSpecialTitle(group, qq int64, title string, timeout int64) int32 {
-	return int32(C.CQ_setGroupSpecialTitle(
-		C.int64_t(group),
-		C.int64_t(qq),
-		cString(title),
-		C.int64_t(timeout),
-	))
-}
-
-// SetGroupWholeBan 设置全员禁言
-func SetGroupWholeBan(group int64, ban bool) int32 {
-	return int32(C.CQ_setGroupWholeBan(
-		C.int64_t(group), cBool(ban),
-	))
-}
-
-//SetGroupAnonymousBan 设置群匿名成员禁言
-func SetGroupAnonymousBan(group int64, anonymous string, time int64) int32 {
-	return int32(C.CQ_setGroupAnonymousBan(
-		C.int64_t(group),
-		cString(anonymous),
-		C.int64_t(time),
-	))
-}
-
-//SetGroupAnonymous 设置群匿名是否开启
-func SetGroupAnonymous(group int64, anonymous bool) int32 {
-	return int32(C.CQ_setGroupAnonymous(
-		C.int64_t(group),
-		cBool(anonymous),
-	))
-}
-
-//SetGroupCard 设置群成员名片
-func SetGroupCard(group, qq int64, card string) int32 {
-	return int32(C.CQ_setGroupCard(
-		C.int64_t(group),
-		C.int64_t(qq),
-		cString(card),
-	))
-}
-
-// SetGroupLeave 退出群聊
-func SetGroupLeave(group int64, dissolve bool) int32 {
-	return int32(C.CQ_setGroupLeave(
-		C.int64_t(group), cBool(dissolve),
+// SendPrivateMsg 发送私聊消息
+func SendPrivateMsg(qq int64, msg string) int32 {
+	return int32(C.CQ_sendPrivateMsg(
+		C.int64_t(qq), cString(msg),
 	))
 }
 
 func SetDiscussLeave(discuss int64) int32 {
 	return int32(C.CQ_setDiscussLeave(C.int64_t(discuss)))
+}
+
+func SetFatal(errmsg string) int32 {
+	return int32(C.CQ_setFatal(cString(errmsg)))
 }
 
 func SetFriendAddRequest(ReqFeedback string, FeedbackType int32, remark string) int32 {
@@ -214,36 +187,83 @@ func SetGroupAddequest2(ReqFeedback string, ReqType, FeedbackType int32, reason 
 	))
 }
 
-func SetFatal(errmsg string) int32 {
-	return int32(C.CQ_setFatal(cString(errmsg)))
-}
-
-func GetGroupMemberInfo(group, qq int64) string {
-	return goString(C.CQ_getGroupMemberInfo(
-		C.int64_t(group), C.int64_t(qq),
+//SetGroupAdmin 设置群管理员
+func SetGroupAdmin(group, qq int64, admin bool) int32 {
+	return int32(C.CQ_setGroupAdmin(
+		C.int64_t(group),
+		C.int64_t(qq),
+		cBool(admin),
 	))
 }
 
-func GetGroupMemberInfo2(group, qq int64, noCatch bool) string {
-	return goString(C.CQ_getGroupMemberInfoV2(
-		C.int64_t(group), C.int64_t(qq), cBool(noCatch),
+//SetGroupAnonymous 设置群匿名是否开启
+func SetGroupAnonymous(group int64, anonymous bool) int32 {
+	return int32(C.CQ_setGroupAnonymous(
+		C.int64_t(group),
+		cBool(anonymous),
 	))
 }
 
-func GetStrangerInfo(qq int64, noCatch bool) string {
-	return goString(C.CQ_getStrangerInfo(
-		C.int64_t(qq), cBool(noCatch),
+//SetGroupAnonymousBan 设置群匿名成员禁言
+func SetGroupAnonymousBan(group int64, anonymous string, time int64) int32 {
+	return int32(C.CQ_setGroupAnonymousBan(
+		C.int64_t(group),
+		cString(anonymous),
+		C.int64_t(time),
 	))
 }
 
-func GetGroupMemberList(group int64) string {
-	return goString(C.CQ_getGroupMemberList(C.int64_t(group)))
+//SetGroupBan 设置群成员禁言
+func SetGroupBan(group, qq, bantime int64) int32 {
+	return int32(C.CQ_setGroupBan(
+		C.int64_t(group),
+		C.int64_t(qq),
+		C.int64_t(bantime),
+	))
 }
 
-func GetGroupList() string {
-	return goString(C.CQ_getGroupList())
+//SetGroupCard 设置群成员名片
+func SetGroupCard(group, qq int64, card string) int32 {
+	return int32(C.CQ_setGroupCard(
+		C.int64_t(group),
+		C.int64_t(qq),
+		cString(card),
+	))
 }
 
-func DeleteMsg(msgID int64) int32 {
-	return int32(C.CQ_deleteMsg(C.int64_t(msgID)))
+//SetGroupKick 将群成员踢出群聊
+func SetGroupKick(group, qq int64, rej bool) int32 {
+	return int32(C.CQ_setGroupKick(
+		C.int64_t(group),
+		C.int64_t(qq),
+		cBool(rej),
+	))
+}
+
+// SetGroupLeave 退出群聊
+func SetGroupLeave(group int64, dissolve bool) int32 {
+	return int32(C.CQ_setGroupLeave(
+		C.int64_t(group), cBool(dissolve),
+	))
+}
+
+//SetGroupSpecialTitle 设置群成员头衔
+func SetGroupSpecialTitle(group, qq int64, title string, timeout int64) int32 {
+	return int32(C.CQ_setGroupSpecialTitle(
+		C.int64_t(group),
+		C.int64_t(qq),
+		cString(title),
+		C.int64_t(timeout),
+	))
+}
+
+// SetGroupWholeBan 设置全员禁言
+func SetGroupWholeBan(group int64, ban bool) int32 {
+	return int32(C.CQ_setGroupWholeBan(
+		C.int64_t(group), cBool(ban),
+	))
+}
+
+func SetRestart() int32 {
+	return int32(C.CQ_setRestart())
 }
