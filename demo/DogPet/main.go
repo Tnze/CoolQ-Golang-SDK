@@ -13,6 +13,10 @@ import (
 	"github.com/Tnze/CoolQ-Golang-SDK/demo/DogPet/corpus"
 )
 
+// cqp: 名称: DogPet
+// cqp: 版本: 1.1.0:3
+// cqp: 作者: Tnze
+// cqp: 简介: 在Q群里养宠物！
 func main() {}
 func init() {
 	cqp.AppID = "online.jdao.dogpet"
