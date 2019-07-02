@@ -1,3 +1,25 @@
+// Cqcfg 就是CoolQ Config，用于为插件自动生成app.json
+//
+// 本工具为试验性工具，请按实际需要使用，若有好建议或改进，欢迎提交issue或者pr
+//
+// 本工具将会扫描您的代码，并且自动统计出您调用了哪些API，响应了哪些事件，
+// 并且在生成的app.json中为相应的API注册权限，为事件注册函数
+//
+// 为了让本工具正常工作，你需要以标准的格式使用Go语言SDK：
+//	响应事件时要为cqp包内相应的函数变量赋值
+//	在主函数开头以后文中会介绍的语法声明插件的AppID和版本、作者等信息
+//
+// 在main函数头之前，你需要写以下几个注释：
+//	// cqp: 名称: 插件名称
+//	// cqp: 版本: 1.0.0:1
+//	// cqp: 作者: 插件作者姓名
+//	// cqp: 简介: 您插件的简介
+// 其中版本是由插件版本和顺序版本号以冒号分隔形成的，有以下一般形式：
+//	主版本.次版本.修正版本:顺序版本
+// 注释的前半部分均为强制要求的固定格式，空格不能多不能少
+//
+// 准备工作完成之后，在你想生成app.json的目录下，运行本工具：
+//	cqcfg 插件main包所在目录
 package main
 
 import (
@@ -23,9 +45,14 @@ var info = struct {
 
 	Events []event `json:"event"`
 	Auth   []int   `json:"auth"`
+
+	Menu   []interface{} `json:"menu"`
+	Status []interface{} `json:"status"`
 }{
 	Ret:    1,
 	APIver: 9,
+	Menu:   []interface{}{},
+	Status: []interface{}{},
 }
 
 type event struct {
@@ -68,7 +95,7 @@ func main() {
 	log.SetPrefix("cqcfg: ")
 
 	fset := token.NewFileSet() // positions are relative to fset
-	pkgs, first := parser.ParseDir(fset, "./demo/DogPet", nil, parser.ParseComments)
+	pkgs, first := parser.ParseDir(fset, os.Args[1], nil, parser.ParseComments)
 	if first != nil {
 		log.Fatal(first)
 	}
@@ -103,7 +130,8 @@ func main() {
 				case "AppID":
 					if v, ok := rhs.(*ast.BasicLit); ok {
 						// fmt.Println(name, "=", v.Value)
-						info.AppID = v.Value
+
+						info.AppID = strings.Trim(v.Value, "\"")
 					}
 				case "Enable":
 					info.Events = append(info.Events, event{
@@ -234,7 +262,19 @@ func main() {
 		}
 	}
 
-	json.NewEncoder(os.Stdout).Encode(info)
+	app, err := json.MarshalIndent(info, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	f, err := os.OpenFile("app.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	if _, err := f.Write(app); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func search(v *ast.Package, findComm, findCall func(name string), findAssign func(name string, rhs ast.Expr)) {

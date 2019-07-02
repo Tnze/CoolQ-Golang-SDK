@@ -1,38 +1,38 @@
 {
-    "ret": 1, // 返回码，固定为1
-    "apiver": 9, // Api版本，本SDK为9
-    "name": "DogPet", // 应用名称
-    "version": "1.1.0", // 应用版本
-    "version_id": 3, // 应用顺序版本（每次发布时至少+1）
-    "author": "Tnze", // 应用作者
-    "description": "在Q群里养宠物！",
-    "event": [ // 事件列表，同一事件类型可重复定义（发布前请删除无用事件）
-        {
-            "name": "应用启动", // 事件名称,随意
-            "function": "EVENT_ON_ENABLE", // 事件对应函数，在cq.h和cq.c内声明和定义
-            "type": 1003, // 事件类型,请参考C++SDK的: https://github.com/MikuPy2001/CQPCPPSDK/blob/master/inculde/CQEVE.h
-            "priority": 30000, // 事件优先级(参见 https://d.cqp.me/Pro/开发/事件信息#priority)
-            "id": 1 // 事件ID，全插件唯一，这意味着您将可以使同一事件类型对应多个事件
-        },
-        {
-            "name": "应用停止",
-            "function": "EVENT_ON_DISABLE",
-            "type": 1004,
-            "priority": 30000,
-            "id": 2
-        },
-        {
-            "name": "群聊消息",
-            "function": "EVENT_ON_GROUP_MSG",
-            "type": 2,
-            "priority": 30000,
-            "id": 4
-        }
-    ],
-    "menu": [],
-    "status": [ // 悬浮窗状态
-    ],
-    "auth": [ // 应用权限（发布前请删除无用权限）
-        101, //发送群消息			sendGroupMsg
-    ]
+	"ret": 1,
+	"apiver": 9,
+	"appid": "online.jdao.dogpet",
+	"name": "DogPet",
+	"version": "1.1.0",
+	"version_id": 3,
+	"author": "Tnze",
+	"description": "在Q群里养宠物！",
+	"event": [
+		{
+			"name": "插件启用",
+			"function": "EVENT_ON_ENABLE",
+			"type": 1003,
+			"priority": 20000,
+			"id": 1003
+		},
+		{
+			"name": "插件停用",
+			"function": "EVENT_ON_DISABLE",
+			"type": 1004,
+			"priority": 20000,
+			"id": 1004
+		},
+		{
+			"name": "群消息",
+			"function": "EVENT_ON_GROUP_MSG",
+			"type": 2,
+			"priority": 20000,
+			"id": 2
+		}
+	],
+	"auth": [
+		101
+	],
+	"menu": [],
+	"status": []
 }
