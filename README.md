@@ -33,6 +33,10 @@ TODO list:
 
 ps: 我不知道并发调用酷Q的API会发生什么，不知道酷Q内部有没有锁
 
+## 重磅推出: cqcfg工具
+自动生成app.json!
+详情使用方法请见[![GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg?status.svg)](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg)
+
 ## 调用顺序小记
 
 API调用顺序：用户代码 -> Go函数 -> C函数 -> 酷Q函数指针  
