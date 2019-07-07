@@ -8,33 +8,9 @@ import (
 	"io"
 	"strings"
 	"time"
+
+	sc "golang.org/x/text/encoding/simplifiedchinese"
 )
-
-//UnpackGroupList 解码群成员列表
-func UnpackGroupList(str string) error {
-	r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(str))
-	//读取群列表人数
-	var MemNum int32
-	if err := binary.Read(r, binary.BigEndian, &MemNum); err != nil {
-		return err
-	}
-	fmt.Println("人数:", MemNum)
-
-	//读成员信息
-	for i := 0; i < int(MemNum); i++ {
-		var Len int16
-		if err := binary.Read(r, binary.BigEndian, &Len); err != nil {
-			return err
-		}
-		data := make([]byte, Len)
-		if err := binary.Read(r, binary.BigEndian, &data); err != nil {
-			return err
-		}
-		readGroupMember(data)
-	}
-
-	return nil
-}
 
 //GroupMember 群成员信息
 type GroupMember struct {
@@ -48,65 +24,121 @@ type GroupMember struct {
 	JoinTime, LastChat time.Time
 	Level              string
 	//管理权限，1/成员；2/管理员；3/群主
-	Auth        int32
+	Auth int32
+	//是否有不良记录
 	Bad         bool
 	Title       string
 	TitleLife   time.Time
 	CanSetTitle bool
 }
 
-func readGroupMember(data []byte) error {
-	r := bytes.NewReader(data)
+//UnpackGroupList 解码群成员列表
+func UnpackGroupList(str string) ([]GroupMember, error) {
+	r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(str))
+	//读取群列表人数
+	var MemNum int32
+	if err := binary.Read(r, binary.BigEndian, &MemNum); err != nil {
+		return nil, err
+	}
+	fmt.Println("人数:", MemNum)
 
-	for _, v := range []decodable{} {
-		if err := v.read(r); err != nil {
-			return err
+	//读成员信息
+	members := make([]GroupMember, MemNum)
+	for i := 0; i < int(MemNum); i++ {
+		var Len int16
+		if err := binary.Read(r, binary.BigEndian, &Len); err != nil {
+			return nil, err
+		}
+
+		data := make([]byte, Len)
+		if err := binary.Read(r, binary.BigEndian, &data); err != nil {
+			return nil, err
+		}
+
+		var err error
+		members[i], err = readGroupMember(data)
+		if err != nil {
+			return members, err //返回成功解析的成员
 		}
 	}
 
-	fmt.Println("数据：")
-	return nil
+	return members, nil
 }
 
-type decodable interface {
-	read(r io.Reader) error
+//UnpackGroupMemberInfo 解码群成员信息
+func UnpackGroupMemberInfo(str string) (m GroupMember, err error) {
+	var data []byte
+	data, err = base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		return
+	}
+
+	m, err = readGroupMember(data)
+	return
 }
 
-type (
-	longF   int64
-	intF    int32
-	timeF   time.Time
-	stringF string
-	boolF   bool
-)
+func readGroupMember(data []byte) (m GroupMember, err error) {
+	r := bytes.NewReader(data)
 
-func (l *longF) read(r io.Reader) error {
-	return binary.Read(r, binary.BigEndian, l)
-}
-func (i *intF) read(r io.Reader) error {
-	return binary.Read(r, binary.BigEndian, i)
-}
-func (t *timeF) read(r io.Reader) error {
-	var unix int32
-	if err := binary.Read(r, binary.BigEndian, &unix); err != nil {
-		return err
+	for _, v := range []interface{}{
+		&m.Group, &m.QQ,
+		&m.Name, &m.Card,
+		&m.Gender, &m.Age,
+		&m.Area,
+		&m.JoinTime, &m.LastChat,
+		&m.Level,
+		&m.Auth,
+		&m.Bad,
+		&m.Title, &m.TitleLife,
+		&m.CanSetTitle,
+	} {
+		err = readField(r, v)
+		if err != nil {
+			return
+		}
 	}
+	fmt.Println("数据：", m)
+
+	return
 }
-func (s *stringF) read(r io.Reader) error {
-	var Len int16
-	if err := binary.Read(r, binary.BigEndian, &Len); err != nil {
+
+func readField(r io.Reader, v interface{}) error {
+	switch v.(type) {
+	default:
+		panic(fmt.Errorf("出乎意料的类型: %T", v))
+
+	case *int64, *int32:
+		return binary.Read(r, binary.BigEndian, v)
+
+	case *string:
+		var len int16
+		if err := binary.Read(r, binary.BigEndian, &len); err != nil {
+			return err
+		}
+
+		buff := make([]byte, len)
+		if err := binary.Read(r, binary.BigEndian, &buff); err != nil {
+			return err
+		}
+
+		str, err := sc.GB18030.NewDecoder().Bytes(buff)
+		*v.(*string) = string(str)
 		return err
+
+	case *bool:
+		var value int32
+		if err := binary.Read(r, binary.BigEndian, &value); err != nil {
+			return err
+		}
+		*v.(*bool) = value != 0
+		return nil
+
+	case *time.Time:
+		var unix int32
+		if err := binary.Read(r, binary.BigEndian, &unix); err != nil {
+			return err
+		}
+		*v.(*time.Time) = time.Unix(int64(unix), 0)
+		return nil
 	}
-	str := make([]byte, Len)
-	if err := binary.Read(r, binary.BigEndian, &str); err != nil {
-		return err
-	}
-	*s = stringF(str)
-	return nil
-}
-func (b *boolF) read(r io.Reader) error {
-	var v int32
-	err := binary.Read(r, binary.BigEndian, &v)
-	*b = v != 0
-	return err
 }
