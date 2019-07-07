@@ -40,7 +40,6 @@ func UnpackGroupList(str string) ([]GroupMember, error) {
 	if err := binary.Read(r, binary.BigEndian, &MemNum); err != nil {
 		return nil, err
 	}
-	fmt.Println("人数:", MemNum)
 
 	//读成员信息
 	members := make([]GroupMember, MemNum)
@@ -97,7 +96,6 @@ func readGroupMember(data []byte) (m GroupMember, err error) {
 			return
 		}
 	}
-	fmt.Println("数据：", m)
 
 	return
 }
