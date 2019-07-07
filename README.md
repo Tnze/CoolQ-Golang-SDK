@@ -28,9 +28,7 @@ TODO list:
 2. 检查是否安装了[go语言编译器](https://golang.google.cn)：`go version`
 3. 检查是否安装了[gcc编译器](http://tdm-gcc.tdragon.net)（cgo需要gcc编译器）：`gcc --version`
 4. 运行`.\build.bat`编译，检查是否有生成*app.dll*
-5. 将*app.dll*和*app.json*复制到酷Q目录下，检查是否能成功加载
-6. 在*app.go* 内编写你的插件，然后重新编译、测试
-7. 插件打包等方法与其他SDK相同
+5. [插件调试、打包等方法](https://d.cqp.me/Pro/开发/快速入门)与其他SDK相同
 
 ps: 我不知道并发调用酷Q的API会发生什么，不知道酷Q内部有没有锁
 
