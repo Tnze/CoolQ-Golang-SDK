@@ -30,8 +30,6 @@ TODO list:
 4. 运行`.\build.bat`编译，检查是否有生成*app.dll*
 5. [插件调试、打包等方法](https://d.cqp.me/Pro/开发/快速入门)与其他SDK相同
 
-ps: 我不知道并发调用酷Q的API会发生什么，不知道酷Q内部有没有锁
-
 ## 重磅推出: cqcfg工具
 自动生成app.json!
 详情使用方法请见[![GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg?status.svg)](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg)
