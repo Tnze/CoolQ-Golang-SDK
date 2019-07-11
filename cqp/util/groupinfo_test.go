@@ -14,6 +14,5 @@ func TestUnpackGroupList(t *testing.T) {
 		t.Errorf("成员数量解析错误，应为%d而不是%d", 4, len(mems))
 	}
 
-	t.Log(mems)
 	//TODO(Tnze): 测试其余的值是否正确
 }

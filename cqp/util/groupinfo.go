@@ -42,23 +42,24 @@ func UnpackGroupList(str string) ([]GroupMember, error) {
 	}
 
 	//读成员信息
-	members := make([]GroupMember, MemNum)
+	members := make([]GroupMember, 0, MemNum)
 	for i := 0; i < int(MemNum); i++ {
 		var Len int16
 		if err := binary.Read(r, binary.BigEndian, &Len); err != nil {
-			return nil, err
+			return members, err
 		}
 
 		data := make([]byte, Len)
 		if err := binary.Read(r, binary.BigEndian, &data); err != nil {
-			return nil, err
+			return members, err
 		}
 
-		var err error
-		members[i], err = readGroupMember(data)
+		m, err := readGroupMember(data)
 		if err != nil {
-			return members, err //返回成功解析的成员
+			return members, err
 		}
+
+		members = append(members, m)
 	}
 
 	return members, nil
