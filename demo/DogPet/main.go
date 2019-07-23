@@ -13,6 +13,7 @@ import (
 	"github.com/Tnze/CoolQ-Golang-SDK/demo/DogPet/corpus"
 )
 
+//go:generate cqcfg .
 // cqp: 名称: DogPet
 // cqp: 版本: 1.1.0:3
 // cqp: 作者: Tnze
