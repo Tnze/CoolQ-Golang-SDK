@@ -10,16 +10,20 @@
 **喜欢要记得Star哦** 
 
 # 那么怎么用这个SDK写自己的插件呢？
+
+1. ~~先clone该项目~~
+1. ~~检查是否安装了go语言编译器：go version~~
+1. ~~检查是否安装了gcc编译器（cgo需要gcc编译器）：gcc --version~~
+1. ~~运行.\build.bat编译，检查是否有生成app.dll~~
 > 戳下面这个`模板`
 1. 使用[模板](https://github.com/Tnze/CoolQ-Golang-Plugin)创建你的插件
-5. 插件调试、打包等[方法](https://d.cqp.me/Pro/开发/快速入门)与其他SDK相同
+1. 插件调试、打包等[方法](https://d.cqp.me/Pro/开发/快速入门)与其他SDK相同
 
 ## 重磅推出: cqcfg工具
-通过读取源码，自动生成app.json!
-~~详情使用方法请见->[![GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg?status.svg)](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg)~~  
-现在插件模板内的脚本会自动调用本工具。
+通过读取源码，自动生成app.json!  
+~~详情使用方法请见->[GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg)~~   现在插件模板会自动调用本工具。
 
-TODO list:
+# 完成度
 - [x] 成功编译成dll
 - [x] 导出函数供酷Q调用
 - [x] 调用酷Q提供的函数
