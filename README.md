@@ -15,7 +15,8 @@
 1. ~~检查是否安装了go语言编译器：go version~~
 1. ~~检查是否安装了gcc编译器（cgo需要gcc编译器）：gcc --version~~
 1. ~~运行.\build.bat编译，检查是否有生成app.dll~~
-> 戳下面这个`模板`
+> 当然是戳这个按钮👉[![UseTemplate](https://img.shields.io/badge/-Use%20Template-success)](https://github.com/Tnze/CoolQ-Golang-Plugin/generate)
+
 1. 使用[模板](https://github.com/Tnze/CoolQ-Golang-Plugin)创建你的插件
 1. 插件调试、打包等[方法](https://d.cqp.me/Pro/开发/快速入门)与其他SDK相同
 
