@@ -41,4 +41,11 @@
 // 然后执行编译命令：
 //	go build -ldflags "-s -w" -buildmode=c-shared -o app.dll
 // 若成功编译则会生成app.dll，将其和app.json一起复制到酷Q的指定文件夹内即可
+//
+// 函数调用顺序说明
+//	API调用顺序：用户代码 -> Go函数 -> C函数 -> 酷Q函数指针
+//	例:           -> AddLog() -> CQ_addLog() -> CQ_addLog_Ptr
+//
+//	Event调用顺序：酷Q -> C函数 -> Go导出函数 -> Go函数
+//	例:           -> EVENT_ON_ENABLE() -> _on_enable() -> Enable()
 package cqp
