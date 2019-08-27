@@ -18,20 +18,27 @@
 //	主版本.次版本.修正版本:顺序版本
 // 注释的前半部分均为强制要求的固定格式，空格不能多不能少
 //
-// 准备工作完成之后，在你想生成app.json的目录下，运行本工具：
-//	cqcfg 插件main包所在目录
+// 用法：
+//	cqcfg [-c, -v] <插件main包所在目录>
+// -c 参数用于自动根据代码提交次数生成版本号
+// -v 参数用于查询cqcfg版本
 package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
 	"log"
 	"os"
+	"os/exec"
+	"strconv"
 	"strings"
 )
+
+const version = "cqcfg 1.1"
 
 var info = struct {
 	Ret       int    `json:"ret"`
@@ -92,10 +99,23 @@ var authcode = map[string]int{
 }
 
 func main() {
+	var countCommit = flag.Bool("c", false, "从Git版本控制系统读取代码提交次数用于递增插件顺序版本")
+	var queVersion = flag.Bool("v", false, "查看cqcfg版本")
+	flag.Parse()
+
+	if *queVersion {
+		// 查询版本
+		fmt.Println(version)
+		os.Exit(0)
+	}
+
 	log.SetPrefix("cqcfg: ")
+	if flag.NArg() < 1 {
+		log.Fatal("缺少启动参数")
+	}
 
 	fset := token.NewFileSet() // positions are relative to fset
-	pkgs, first := parser.ParseDir(fset, os.Args[1], nil, parser.ParseComments)
+	pkgs, first := parser.ParseDir(fset, flag.Arg(0), nil, parser.ParseComments)
 	if first != nil {
 		log.Fatal(first)
 	}
@@ -111,9 +131,19 @@ func main() {
 					}
 				case strings.HasPrefix(comm, "// cqp: 版本:"):
 					var v1, v2, v3, seq int
-					if _, err := fmt.Sscanf(comm, "// cqp: 版本:%d.%d.%d:%d", &v1, &v2, &v3, &seq); err != nil {
+					_, err := fmt.Sscanf(comm, "// cqp: 版本:%d.%d.%d:%d", &v1, &v2, &v3, &seq)
+					if err != nil {
 						log.Fatal("无法解析版本号:", err)
 					}
+
+					if *countCommit {
+						c, err := commitCount()
+						if err != nil {
+							log.Fatalf("统计Git提交数失败: %v", err)
+						}
+						seq += c
+					}
+
 					info.Version = fmt.Sprintf("%d.%d.%d", v1, v2, v3)
 					info.VersionID = seq
 				case strings.HasPrefix(comm, "// cqp: 作者:"):
@@ -320,4 +350,18 @@ func importsName(f *ast.File) string {
 		}
 	}
 	return ""
+}
+
+func commitCount() (int, error) {
+	cmd := exec.Command("git", "rev-list", "--all", "--count")
+	out, err := cmd.Output()
+	if err != nil {
+		return 0, err
+	}
+
+	seq, err := strconv.Atoi(strings.TrimSpace(string(out)))
+	if err != nil {
+		return 0, err
+	}
+	return seq, nil
 }
