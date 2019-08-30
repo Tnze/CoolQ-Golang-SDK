@@ -32,8 +32,8 @@ type GroupMember struct {
 	CanSetTitle bool
 }
 
-//UnpackGroupList 解码群成员列表
-func UnpackGroupList(str string) ([]GroupMember, error) {
+//UnpackGroupMemberList 解码群成员列表
+func UnpackGroupMemberList(str string) ([]GroupMember, error) {
 	r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(str))
 	//读取群列表人数
 	var MemNum int32
@@ -65,7 +65,7 @@ func UnpackGroupList(str string) ([]GroupMember, error) {
 	return members, nil
 }
 
-//UnpackGroupMemberInfo 解码群成员信息
+// UnpackGroupMemberInfo 解码群成员信息
 func UnpackGroupMemberInfo(str string) (m GroupMember, err error) {
 	var data []byte
 	data, err = base64.StdEncoding.DecodeString(str)
@@ -75,6 +75,40 @@ func UnpackGroupMemberInfo(str string) (m GroupMember, err error) {
 
 	m, err = readGroupMember(data)
 	return
+}
+
+// UnpackGroupList 解码群列表
+func UnpackGroupList(str string) ([]GroupInfo, error) {
+	data, err := base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		return nil, err
+	}
+
+	r := bytes.NewReader(data)
+
+	var Len int32
+	if err := readField(r, &Len); err != nil {
+		return nil, err
+	}
+
+	var list []GroupInfo
+	for i := int32(0); i < Len; i++ {
+		var g GroupInfo
+		var Len int16 //单条Info的长度值没用
+		for _, v := range []interface{}{
+			&Len,
+			&g.ID,
+			&g.Name,
+		} {
+			err = readField(r, v)
+			if err != nil {
+				return list, err
+			}
+		}
+		list = append(list, g)
+	}
+
+	return list, nil
 }
 
 func readGroupMember(data []byte) (m GroupMember, err error) {
@@ -106,7 +140,7 @@ func readField(r io.Reader, v interface{}) error {
 	default:
 		panic(fmt.Errorf("出乎意料的类型: %T", v))
 
-	case *int64, *int32:
+	case *int64, *int32, *int16:
 		return binary.Read(r, binary.BigEndian, v)
 
 	case *string:
@@ -140,4 +174,9 @@ func readField(r io.Reader, v interface{}) error {
 		*v.(*time.Time) = time.Unix(int64(unix), 0)
 		return nil
 	}
+}
+
+type GroupInfo struct {
+	ID   int64
+	Name string
 }
