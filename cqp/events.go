@@ -140,8 +140,8 @@ var GroupMsg func(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous, 
 var DiscussMsg func(subType, msgID int32, fromDiscuss, fromQQ int64, msg string, font int32) int32
 var GroupUpload func(subType, sendTime int32, fromGroup, fromQQ int64, file string) int32
 var GroupAdmin func(subType, sendTime int32, fromGroup, QQ int64) int32
-var GroupMemberDecrease func(sub_type, send_time int32, from_group, from_qq, being_operate_qq int64) int32
-var GroupMemberIncrease func(sub_type, send_time int32, from_group, from_qq, being_operate_qq int64) int32
-var FriendAdd func(sub_type, send_time int32, from_qq int64) int32
-var FriendRequest func(sub_type, send_time int32, from_qq int64, msg, response_flag string) int32
-var GroupRequest func(sub_type, send_time int32, from_group, from_qq int64, msg, response_flag string) int32
+var GroupMemberDecrease func(subType, sendTime int32, fromGroup, fromQQ, beingOperateQQ int64) int32
+var GroupMemberIncrease func(subType, sendTime int32, fromGroup, fromQQ, beingOperateQQ int64) int32
+var FriendAdd func(subType, sendTime int32, fromQQ int64) int32
+var FriendRequest func(subType, sendTime int32, fromQQ int64, msg, responseFlag string) int32
+var GroupRequest func(subType, sendTime int32, fromGroup, fromQQ int64, msg, responseFlag string) int32

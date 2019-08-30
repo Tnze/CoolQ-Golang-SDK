@@ -4,7 +4,7 @@ package cqp
 import "C"
 import sc "golang.org/x/text/encoding/simplifiedchinese"
 
-//Log优先级（priority）,AddLog的第一个参数
+// Log优先级（priority, AddLog的第一个参数）
 const (
 	Debug       = 0
 	Info        = 10
@@ -34,59 +34,75 @@ func cBool(b bool) C.int32_t {
 }
 
 // AddLog 增加运行日志
-func AddLog(priority int32, logtype, reason string) int32 {
+// 	priority 是Log的优先级，请使用cqp预定义好的值。
+// 	logType 是日志类型，酷Q日志窗口将将其显示在日志本身的前一列。
+// 	reason 是日志内容
+func AddLog(priority int32, logType, reason string) int32 {
 	return int32(C.CQ_addLog(
 		C.int32_t(priority),
-		cString(logtype),
+		cString(logType),
 		cString(reason),
 	))
 }
 
-//CanSendImage 能否发送图片
+// CanSendImage 能否发送图片
 func CanSendImage() bool {
 	return C.CQ_canSendImage() != 0
 }
 
-//CanSendRecord 能否发送语音
+// CanSendRecord 能否发送语音
 func CanSendRecord() bool {
 	return C.CQ_canSendRecord() != 0
 }
 
+// DeleteMsg 撤回消息
 func DeleteMsg(msgID int64) int32 {
 	return int32(C.CQ_deleteMsg(C.int64_t(msgID)))
 }
 
 // GetAppDir 取应用目录
-// 返回的路径末尾带"\"
+// 返回的路径末尾带"\"，一般用法如下，所以不用关心是否有斜线
+// 	os.Open(filepath.Join(cqp.GetAppDir(), "data.db"))
 func GetAppDir() string {
 	return goString(C.CQ_getAppDirectory())
 }
 
 // GetCookies 获取cookies
+//
+// 需要严格授权
 func GetCookies() string {
 	return goString(C.CQ_getCookies())
 }
 
 // GetCSRFToken 获取CSRF Token
+//
 // 需要严格授权
 func GetCSRFToken() int32 {
 	return int32(C.CQ_getCsrfToken())
 }
 
+// GetGroupList 获取群列表
+// 获取后需要用cqp/util包的UnpackGroupList函数解码该字符串
 func GetGroupList() string {
 	return goString(C.CQ_getGroupList())
 }
 
+// GetGroupMemberInfo2 获取群成员信息
+// 获取后需要用cqp/util包的UnpackGroupMemberInfo函数解码该字符串
 func GetGroupMemberInfo2(group, qq int64, noCatch bool) string {
 	return goString(C.CQ_getGroupMemberInfoV2(
 		C.int64_t(group), C.int64_t(qq), cBool(noCatch),
 	))
 }
 
+// GetGroupMemberList 获取群成员列表
+// 获取后需要用cqp/util包的UnpackGroupMemberList函数解码该字符串
 func GetGroupMemberList(group int64) string {
 	return goString(C.CQ_getGroupMemberList(C.int64_t(group)))
 }
 
+// GetImage 获取图片
+// 参数为CQ码内容，返回值为图片的文件路径
 func GetImage(file string) string {
 	return goString(C.CQ_getImage(cString(file)))
 }
@@ -102,6 +118,8 @@ func GetLoginQQ() int64 {
 }
 
 // GetRecord 获取语音
+// file参数为CQ码内容，format为插件所需格式，返回值应该是文件路径
+//
 // 需要严格授权
 func GetRecord(file, format string) string {
 	return goString(C.CQ_getRecord(
@@ -110,6 +128,8 @@ func GetRecord(file, format string) string {
 }
 
 // GetRecordV2 获取语音
+// 应该同GetRecord
+//
 // 需要严格授权
 func GetRecordV2(file, format string) string {
 	return goString(C.CQ_getRecordV2(
@@ -117,6 +137,8 @@ func GetRecordV2(file, format string) string {
 	))
 }
 
+// GetStrangerInfo 获取陌生人信息
+// noCatch指定是否使用缓存
 func GetStrangerInfo(qq int64, noCatch bool) string {
 	return goString(C.CQ_getStrangerInfo(
 		C.int64_t(qq), cBool(noCatch),
@@ -143,6 +165,7 @@ func SendLike(qq int64) int32 {
 }
 
 // SendLike2 发送赞2
+// times指定赞的次数
 func SendLike2(qq int64, times int32) int32 {
 	return int32(C.CQ_sendLikeV2(
 		C.int64_t(qq), C.int32_t(times),
@@ -156,14 +179,20 @@ func SendPrivateMsg(qq int64, msg string) int32 {
 	))
 }
 
+// SetDiscussLeave 退出讨论组
 func SetDiscussLeave(discuss int64) int32 {
 	return int32(C.CQ_setDiscussLeave(C.int64_t(discuss)))
 }
 
+// SetFatal 未知函数，请不要调用
 func SetFatal(errmsg string) int32 {
 	return int32(C.CQ_setFatal(cString(errmsg)))
 }
 
+// SetFriendAddRequest 响应好友申请
+// ReqFeedback 请传入好友请求事件(FriendRequest)中收到的responseFlag。
+// FeedbackType 是否同意请求，同意:1，拒绝:2。
+// remark 好友备注
 func SetFriendAddRequest(ReqFeedback string, FeedbackType int32, remark string) int32 {
 	return int32(C.CQ_setFriendAddRequest(
 		cString(ReqFeedback),
@@ -172,14 +201,14 @@ func SetFriendAddRequest(ReqFeedback string, FeedbackType int32, remark string) 
 	))
 }
 
-func SetGroupAddequest(ReqFeedback string, ReqType, FeedbackType int32) int32 {
+func SetGroupAddRequest(ReqFeedback string, ReqType, FeedbackType int32) int32 {
 	return int32(C.CQ_setGroupAddRequest(
 		cString(ReqFeedback),
 		C.int32_t(ReqType), C.int32_t(FeedbackType),
 	))
 }
 
-func SetGroupAddequest2(ReqFeedback string, ReqType, FeedbackType int32, reason string) int32 {
+func SetGroupAddRequest2(ReqFeedback string, ReqType, FeedbackType int32, reason string) int32 {
 	return int32(C.CQ_setGroupAddRequestV2(
 		cString(ReqFeedback),
 		C.int32_t(ReqType), C.int32_t(FeedbackType),
@@ -264,6 +293,7 @@ func SetGroupWholeBan(group int64, ban bool) int32 {
 	))
 }
 
+// SetRestart 未知函数，请不要调用
 func SetRestart() int32 {
 	return int32(C.CQ_setRestart())
 }
