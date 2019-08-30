@@ -24,12 +24,18 @@ func _on_disable() int32 {
 
 //export _on_start
 func _on_start() int32 {
-	return 0
+	if Start == nil {
+		return 0
+	}
+	return Start()
 }
 
 //export _on_exit
 func _on_exit() int32 {
-	return 0
+	if Exit == nil {
+		return 0
+	}
+	return Exit()
 }
 
 //export _on_private_msg
