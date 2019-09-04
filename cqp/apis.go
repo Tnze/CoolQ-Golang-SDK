@@ -74,6 +74,13 @@ func GetCookies() string {
 	return goString(C.CQ_getCookies())
 }
 
+// GetCookiesV2 获取cookies V2
+//
+// 需要严格授权
+func GetCookiesV2(domain string) string {
+	return goString(C.CQ_getCookiesV2(cString(domain)))
+}
+
 // GetCSRFToken 获取CSRF Token
 //
 // 需要严格授权

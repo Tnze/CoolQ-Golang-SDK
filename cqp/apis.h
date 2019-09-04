@@ -57,6 +57,7 @@ CQAPI(char *, CQ_getGroupMemberInfoV2, int64_t group_id, int64_t qq, cq_bool_t n
 
 // Get CoolQ Information
 CQAPI(char *, CQ_getCookies)
+CQAPI(char *, CQ_getCookiesV2, char *domain)
 CQAPI(int32_t, CQ_getCsrfToken)
 CQAPI(char *, CQ_getAppDirectory)
 CQAPI(char *, CQ_getRecord, char *file, char *out_format)

@@ -21,6 +21,7 @@ CQEVENT Initialize(int32_t access_code)
     LoadAPI(CQ_deleteMsg);
     LoadAPI(CQ_getAppDirectory);
     LoadAPI(CQ_getCookies);
+    LoadAPI(CQ_getCookiesV2);
     LoadAPI(CQ_getCsrfToken);
     LoadAPI(CQ_getGroupList);
     LoadAPI(CQ_getGroupMemberInfoV2);
@@ -68,6 +69,11 @@ int32_t CQ_canSendRecord() { return CQ_canSendRecord_Ptr(ac); }
 int32_t CQ_deleteMsg(int64_t MsgID) { return CQ_deleteMsg_Ptr(ac, MsgID); }
 char *CQ_getAppDirectory() { return CQ_getAppDirectory_Ptr(ac); }
 char *CQ_getCookies() { return CQ_getCookies_Ptr(ac); }
+char *CQ_getCookiesV2(char *domain) {
+    char *ret = CQ_getCookiesV2_Ptr(ac, domain);
+    free(domain);
+    return ret;
+;
 int32_t CQ_getCsrfToken() { return CQ_getCsrfToken_Ptr(ac); }
 char *CQ_getGroupList() { return CQ_getGroupList_Ptr(ac); }
 char *CQ_getGroupMemberInfoV2(int64_t GroupNum, int64_t QQ, int32_t NoCatch) { return CQ_getGroupMemberInfoV2_Ptr(ac, GroupNum, QQ, NoCatch); }
