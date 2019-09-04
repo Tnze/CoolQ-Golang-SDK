@@ -2,12 +2,12 @@
     "files.associations": {
         "stdint.h": "c"
     },
-    // "go.toolsEnvVars": {
-    //     "CGO_LDFLAGS": "-Wl,--kill-at",
-    //     "GOOS": "windows",
-    //     "GOARCH": "386",
-    //     "CGO_ENABLED": "1",
-    // },
+     "go.toolsEnvVars": {
+         "CGO_LDFLAGS": "-Wl,--kill-at",
+         "GOOS": "windows",
+         "GOARCH": "386",
+         "CGO_ENABLED": "1",
+     },
     "go.inferGopath": false,
     "go.formatTool": "gofmt"
 }
