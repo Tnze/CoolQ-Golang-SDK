@@ -73,7 +73,7 @@ char *CQ_getCookiesV2(char *domain) {
     char *ret = CQ_getCookiesV2_Ptr(ac, domain);
     free(domain);
     return ret;
-;
+};
 int32_t CQ_getCsrfToken() { return CQ_getCsrfToken_Ptr(ac); }
 char *CQ_getGroupList() { return CQ_getGroupList_Ptr(ac); }
 char *CQ_getGroupMemberInfoV2(int64_t GroupNum, int64_t QQ, int32_t NoCatch) { return CQ_getGroupMemberInfoV2_Ptr(ac, GroupNum, QQ, NoCatch); }
