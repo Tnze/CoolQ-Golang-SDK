@@ -42,7 +42,7 @@ import (
 	"strings"
 )
 
-const version = "cqcfg 2.0"
+const version = "cqcfg 2.1"
 
 // 运行时参数
 var (
@@ -67,34 +67,21 @@ func main() {
 	APIs := make(map[string]int)
 
 	fset := token.NewFileSet()
-	filepath.Walk(flag.Arg(0), func(path string, finfo os.FileInfo, err error) error {
+	err := filepath.Walk(flag.Arg(0), func(path string, finfo os.FileInfo, err error) error {
 		if finfo.IsDir() {
 			pkgs, first := parser.ParseDir(fset, path, nil, parser.ParseComments)
 			if first != nil {
 				log.Fatal(first)
 			}
 			for _, p := range pkgs {
-				search(p,
-					onComm,
-					func(name string) { APIs[name]++ }, //记录API调用
-					func(name string, rhs ast.Expr) { //记录AppInfo和事件注册
-						if name == "AppID" {
-							if v, ok := rhs.(*ast.BasicLit); ok {
-								var err error
-								info.AppID, err = strconv.Unquote(v.Value)
-								if err != nil {
-									log.Fatalf("解析AppID失败: %v", err)
-								}
-							}
-						} else {
-							onSetEvent(name, rhs)
-						}
-					},
-				)
+				search(p, APIs)
 			}
 		}
 		return nil
 	})
+	if err != nil {
+		log.Fatalf("遍历当前目录失败: %v", err)
+	}
 
 	onCallAPI(APIs)
 
@@ -118,7 +105,7 @@ func main() {
 }
 
 // 搜索整个包，当找到注释、函数调用或者赋值语句时调用相应的处理函数
-func search(v *ast.Package, findComm, findCall func(name string), findAssign func(name string, rhs ast.Expr)) {
+func search(v *ast.Package, APIs map[string]int) {
 	var cqp string
 	ast.Inspect(v, func(n ast.Node) bool {
 		switch n.(type) {
@@ -134,20 +121,32 @@ func search(v *ast.Package, findComm, findCall func(name string), findAssign fun
 			}
 
 		case *ast.Comment: //注释
-			findComm(n.(*ast.Comment).Text)
+			onComm(n.(*ast.Comment).Text)
 
 		case *ast.AssignStmt: //赋值语句
 			as := n.(*ast.AssignStmt)
 			if s, ok := as.Lhs[0].(*ast.SelectorExpr); ok {
 				if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
-					findAssign(s.Sel.String(), as.Rhs[0])
+					//记录AppInfo和事件注册
+					name, rhs := s.Sel.String(), as.Rhs[0]
+					if name == "AppID" {
+						if v, ok := rhs.(*ast.BasicLit); ok {
+							var err error
+							info.AppID, err = strconv.Unquote(v.Value)
+							if err != nil {
+								log.Fatalf("解析AppID失败: %v", err)
+							}
+						}
+					} else {
+						onSetEvent(name, rhs)
+					}
 				}
 			}
 
 		case *ast.SelectorExpr: //调用cqp包
 			s := n.(*ast.SelectorExpr)
 			if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
-				findCall(s.Sel.String())
+				APIs[s.Sel.String()]++
 			}
 		}
 		return true
