@@ -37,6 +37,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -63,28 +64,37 @@ func main() {
 		log.Fatal("请传入项目根目录")
 	}
 
-	fset := token.NewFileSet() // positions are relative to fset
-	pkgs, first := parser.ParseDir(fset, flag.Arg(0), nil, parser.ParseComments)
-	if first != nil {
-		log.Fatal(first)
-	}
-
 	APIs := make(map[string]int)
-	for _, p := range pkgs {
-		search(p,
-			onComm,
-			func(name string) { APIs[name]++ }, //记录API调用
-			func(name string, rhs ast.Expr) { //记录AppInfo和事件注册
-				if name == "AppID" {
-					if v, ok := rhs.(*ast.BasicLit); ok {
-						info.AppID = strings.Trim(v.Value, "\"")
-					}
-				} else {
-					onSetEvent(name, rhs)
-				}
-			},
-		)
-	}
+
+	fset := token.NewFileSet()
+	filepath.Walk(flag.Arg(0), func(path string, finfo os.FileInfo, err error) error {
+		if finfo.IsDir() {
+			pkgs, first := parser.ParseDir(fset, path, nil, parser.ParseComments)
+			if first != nil {
+				log.Fatal(first)
+			}
+			for _, p := range pkgs {
+				search(p,
+					onComm,
+					func(name string) { APIs[name]++ }, //记录API调用
+					func(name string, rhs ast.Expr) { //记录AppInfo和事件注册
+						if name == "AppID" {
+							if v, ok := rhs.(*ast.BasicLit); ok {
+								var err error
+								info.AppID, err = strconv.Unquote(v.Value)
+								if err != nil {
+									log.Fatalf("解析AppID失败: %v", err)
+								}
+							}
+						} else {
+							onSetEvent(name, rhs)
+						}
+					},
+				)
+			}
+		}
+		return nil
+	})
 
 	onCallAPI(APIs)
 
@@ -109,46 +119,39 @@ func main() {
 
 // 搜索整个包，当找到注释、函数调用或者赋值语句时调用相应的处理函数
 func search(v *ast.Package, findComm, findCall func(name string), findAssign func(name string, rhs ast.Expr)) {
-	for _, f := range v.Files {
-		//获取该文件里cqp包的导入名
-		cqp := importsName(f)
-
-		//搜索API调用
-		ast.Inspect(f, func(n ast.Node) bool {
-			switch n.(type) {
-			case *ast.Comment: //注释
-				findComm(n.(*ast.Comment).Text)
-			case *ast.AssignStmt: //赋值语句
-				as := n.(*ast.AssignStmt)
-				if s, ok := as.Lhs[0].(*ast.SelectorExpr); ok {
-					if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
-						findAssign(s.Sel.String(), as.Rhs[0])
-					}
+	var cqp string
+	ast.Inspect(v, func(n ast.Node) bool {
+		switch n.(type) {
+		case *ast.ImportSpec:
+			// 更新cqp包导入名，import语句一定在调用之前，所以在这里更新是及时的
+			imp := n.(*ast.ImportSpec)
+			if imp.Path.Value == `"github.com/Tnze/CoolQ-Golang-SDK/cqp"` {
+				if imp.Name != nil {
+					cqp = imp.Name.Name
+				} else {
+					cqp = "cqp"
 				}
+			}
 
-			case *ast.SelectorExpr: //调用cqp包
-				s := n.(*ast.SelectorExpr)
+		case *ast.Comment: //注释
+			findComm(n.(*ast.Comment).Text)
+
+		case *ast.AssignStmt: //赋值语句
+			as := n.(*ast.AssignStmt)
+			if s, ok := as.Lhs[0].(*ast.SelectorExpr); ok {
 				if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
-					findCall(s.Sel.String())
+					findAssign(s.Sel.String(), as.Rhs[0])
 				}
 			}
-			return true
-		})
-	}
-}
 
-// 获取SDK的导入名
-func importsName(f *ast.File) string {
-	for _, p := range f.Imports {
-		if p.Path.Value == `"github.com/Tnze/CoolQ-Golang-SDK/cqp"` {
-			// fmt.Println(p.Name, p.Path.Value)
-			if p.Name != nil {
-				return p.Name.Name
+		case *ast.SelectorExpr: //调用cqp包
+			s := n.(*ast.SelectorExpr)
+			if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
+				findCall(s.Sel.String())
 			}
-			return "cqp"
 		}
-	}
-	return ""
+		return true
+	})
 }
 
 // 统计当前git代码库的提交次数
