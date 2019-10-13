@@ -30,10 +30,10 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -42,7 +42,7 @@ import (
 	"strings"
 )
 
-const version = "cqcfg 2.1"
+const version = "2.2"
 
 // 运行时参数
 var (
@@ -52,14 +52,14 @@ var (
 
 func main() {
 	flag.Parse()
+	log.SetFlags(0) // log不显示日期和时间
+	log.SetPrefix("cqcfg: ")
 
-	if *queVersion {
-		// 查询版本
-		fmt.Println(version)
+	if *queVersion { // 查询版本
+		log.Print(version)
 		os.Exit(0)
 	}
 
-	log.SetPrefix("cqcfg: ")
 	if flag.NArg() < 1 {
 		log.Fatal("请传入项目根目录")
 	}
@@ -67,11 +67,12 @@ func main() {
 	APIs := make(map[string]int)
 
 	fset := token.NewFileSet()
+	// 遍历当前目录下所有包
 	err := filepath.Walk(flag.Arg(0), func(path string, finfo os.FileInfo, err error) error {
 		if finfo.IsDir() {
 			pkgs, first := parser.ParseDir(fset, path, nil, parser.ParseComments)
 			if first != nil {
-				log.Fatal(first)
+				return first
 			}
 			for _, p := range pkgs {
 				search(p, APIs)
@@ -80,77 +81,81 @@ func main() {
 		return nil
 	})
 	if err != nil {
-		log.Fatalf("遍历当前目录失败: %v", err)
+		log.Fatal("遍历当前目录失败: ", err)
 	}
 
-	onCallAPI(APIs)
+	addAuth(APIs)
 
 	// 生成JSON
 	app, err := json.MarshalIndent(info, "", "\t")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("生成json失败: ", err)
 	}
 
 	// 写入文件
-	f, err := os.OpenFile("app.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	err = ioutil.WriteFile("app.json", app, 0644)
 	if err != nil {
-		log.Fatal(err)
-	}
-	if _, err := f.Write(app); err != nil {
-		log.Fatal(err)
-	}
-	if err := f.Close(); err != nil {
-		log.Fatal(err)
+		log.Fatal("写入文件失败: ", err)
 	}
 }
 
-// 搜索整个包，当找到注释、函数调用或者赋值语句时调用相应的处理函数
+// 搜索、处理整个包，当找到注释、函数调用或者赋值语句时调用相应的处理函数
 func search(v *ast.Package, APIs map[string]int) {
 	var cqp string
 	ast.Inspect(v, func(n ast.Node) bool {
 		switch n.(type) {
 		case *ast.ImportSpec:
 			// 更新cqp包导入名，import语句一定在调用之前，所以在这里更新是及时的
-			imp := n.(*ast.ImportSpec)
-			if imp.Path.Value == `"github.com/Tnze/CoolQ-Golang-SDK/cqp"` {
-				if imp.Name != nil {
-					cqp = imp.Name.Name
-				} else {
-					cqp = "cqp"
-				}
-			}
+			handleImportSpec(&cqp, n.(*ast.ImportSpec))
 
 		case *ast.Comment: //注释
 			onComm(n.(*ast.Comment).Text)
 
 		case *ast.AssignStmt: //赋值语句
-			as := n.(*ast.AssignStmt)
-			if s, ok := as.Lhs[0].(*ast.SelectorExpr); ok {
-				if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
-					//记录AppInfo和事件注册
-					name, rhs := s.Sel.String(), as.Rhs[0]
-					if name == "AppID" {
-						if v, ok := rhs.(*ast.BasicLit); ok {
-							var err error
-							info.AppID, err = strconv.Unquote(v.Value)
-							if err != nil {
-								log.Fatalf("解析AppID失败: %v", err)
-							}
-						}
-					} else {
-						onSetEvent(name, rhs)
-					}
-				}
-			}
+			handleAssignStmt(cqp, n.(*ast.AssignStmt))
 
 		case *ast.SelectorExpr: //调用cqp包
-			s := n.(*ast.SelectorExpr)
-			if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
-				APIs[s.Sel.String()]++
-			}
+			handleSelectorExpr(cqp, n.(*ast.SelectorExpr), APIs)
+
 		}
 		return true
 	})
+}
+
+func handleImportSpec(cqp *string, imp *ast.ImportSpec) {
+	if imp.Path.Value == `"github.com/Tnze/CoolQ-Golang-SDK/cqp"` {
+		if imp.Name != nil {
+			*cqp = imp.Name.Name
+		} else {
+			*cqp = "cqp"
+		}
+	}
+}
+
+func handleAssignStmt(cqp string, as *ast.AssignStmt) {
+	if s, ok := as.Lhs[0].(*ast.SelectorExpr); ok {
+		if x, ok := s.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
+			//记录AppInfo和事件注册
+			name, rhs := s.Sel.String(), as.Rhs[0]
+			if name == "AppID" {
+				if v, ok := rhs.(*ast.BasicLit); ok {
+					var err error
+					info.AppID, err = strconv.Unquote(v.Value)
+					if err != nil {
+						log.Fatalf("解析AppID失败: %v", err)
+					}
+				}
+			} else {
+				onSetEvent(name, rhs)
+			}
+		}
+	}
+}
+
+func handleSelectorExpr(cqp string, se *ast.SelectorExpr, apis map[string]int) {
+	if x, ok := se.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
+		apis[se.Sel.String()]++
+	}
 }
 
 // 统计当前git代码库的提交次数
