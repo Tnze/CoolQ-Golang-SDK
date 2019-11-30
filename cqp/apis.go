@@ -88,6 +88,11 @@ func GetCSRFToken() int32 {
 	return int32(C.CQ_getCsrfToken())
 }
 
+// GetFriendList 获取好友列表
+func GetFriendList() string {
+	return goString(C.CQ_getGroupList())
+}
+
 // GetGroupList 获取群列表
 // 获取后需要用cqp/util包的UnpackGroupList函数解码该字符串
 func GetGroupList() string {
