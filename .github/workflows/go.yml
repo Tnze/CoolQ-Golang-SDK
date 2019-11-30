@@ -17,6 +17,9 @@ jobs:
       with:
         go-version: 1.13
       id: go
+      
+    - name: Install MSYS2
+      run: choco install msys2
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
