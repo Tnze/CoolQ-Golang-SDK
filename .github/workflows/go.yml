@@ -1,0 +1,28 @@
+name: Go
+on: [push]
+env:
+  CGO_LDFLAGS: -Wl,--kill-at
+  CGO_ENABLED: 1
+  GOOS: windows
+  GOARCH: 386 
+jobs:
+
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+      
+    - name: Install MSYS2
+      run: choco install msys2
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+
+    - name: Build
+      run: go build -ldflags "-s -w" -buildmode=c-shared -o app.dll
