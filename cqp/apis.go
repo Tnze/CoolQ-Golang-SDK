@@ -2,7 +2,10 @@ package cqp
 
 // #include "apis.h"
 import "C"
-import sc "golang.org/x/text/encoding/simplifiedchinese"
+import (
+	"fmt"
+	sc "golang.org/x/text/encoding/simplifiedchinese"
+)
 
 // Log优先级（priority, AddLog的第一个参数）
 const (
@@ -94,23 +97,35 @@ func GetFriendList() string {
 }
 
 // GetGroupList 获取群列表
-// 获取后需要用cqp/util包的UnpackGroupList函数解码该字符串
-func GetGroupList() string {
-	return goString(C.CQ_getGroupList())
+func GetGroupList() []GroupInfo {
+	raw := goString(C.CQ_getGroupList())
+	list, err := UnpackGroupList(raw)
+	if err != nil {
+		panic(fmt.Errorf("cqp: 内部错误，酷Q返回的群列表格式不正确: %v", err))
+	}
+	return list
 }
 
-// GetGroupMemberInfo2 获取群成员信息
-// 获取后需要用cqp/util包的UnpackGroupMemberInfo函数解码该字符串
-func GetGroupMemberInfo2(group, qq int64, noCatch bool) string {
-	return goString(C.CQ_getGroupMemberInfoV2(
+// GetGroupMemberInfo 获取群成员信息
+func GetGroupMemberInfo(group, qq int64, noCatch bool) GroupMember {
+	raw := goString(C.CQ_getGroupMemberInfoV2(
 		C.int64_t(group), C.int64_t(qq), cBool(noCatch),
 	))
+	member, err := UnpackGroupMemberInfo(raw)
+	if err != nil {
+		panic(fmt.Errorf("cqp: 内部错误，酷Q返回的群成员信息格式不正确: %v", err))
+	}
+	return member
 }
 
 // GetGroupMemberList 获取群成员列表
-// 获取后需要用cqp/util包的UnpackGroupMemberList函数解码该字符串
-func GetGroupMemberList(group int64) string {
-	return goString(C.CQ_getGroupMemberList(C.int64_t(group)))
+func GetGroupMemberList(group int64) []GroupMember {
+	raw := goString(C.CQ_getGroupMemberList(C.int64_t(group)))
+	list, err := UnpackGroupMemberList(raw)
+	if err != nil {
+		panic(fmt.Errorf("cqp: 内部错误，酷Q返回的群成员列表格式不正确: %v", err))
+	}
+	return list
 }
 
 // GetImage 获取图片
@@ -196,10 +211,10 @@ func SetDiscussLeave(discuss int64) int32 {
 	return int32(C.CQ_setDiscussLeave(C.int64_t(discuss)))
 }
 
-// SetFatal 未知函数，请不要调用
-func SetFatal(errmsg string) int32 {
-	return int32(C.CQ_setFatal(cString(errmsg)))
-}
+//// SetFatal 未知函数，请不要调用
+//func SetFatal(errmsg string) int32 {
+//	return int32(C.CQ_setFatal(cString(errmsg)))
+//}
 
 // SetFriendAddRequest 响应好友申请
 // ReqFeedback 请传入好友请求事件(FriendRequest)中收到的responseFlag。
