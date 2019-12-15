@@ -7,16 +7,18 @@ import (
 	sc "golang.org/x/text/encoding/simplifiedchinese"
 )
 
+type Priority int32
+
 // Log优先级（priority, AddLog的第一个参数）
 const (
-	Debug       = 0
-	Info        = 10
-	InfoSuccess = 11
-	InfoRecv    = 12
-	InfoSend    = 13
-	Warning     = 20
-	Error       = 30
-	Fatal       = 40
+	Debug       Priority = 0
+	Info                 = 10
+	InfoSuccess          = 11
+	InfoRecv             = 12
+	InfoSend             = 13
+	Warning              = 20
+	Error                = 30
+	Fatal                = 40
 )
 
 func cString(str string) *C.char {
@@ -40,9 +42,9 @@ func cBool(b bool) C.int32_t {
 // 	priority 是Log的优先级，请使用cqp预定义好的值。
 // 	logType 是日志类型，酷Q日志窗口将将其显示在日志本身的前一列。
 // 	reason 是日志内容
-func AddLog(priority int32, logType, reason string) int32 {
+func AddLog(p Priority, logType, reason string) int32 {
 	return int32(C.CQ_addLog(
-		C.int32_t(priority),
+		C.int32_t(p),
 		cString(logType),
 		cString(reason),
 	))

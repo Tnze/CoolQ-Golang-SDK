@@ -2,6 +2,10 @@ package cqp
 
 // #include "events.h"
 import "C"
+import (
+	"fmt"
+	"runtime/debug"
+)
 
 //export _appinfo
 func _appinfo() *C.char { return C.CString("9," + AppID) }
@@ -11,6 +15,7 @@ func _on_enable() int32 {
 	if Enable == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return Enable()
 }
 
@@ -19,6 +24,7 @@ func _on_disable() int32 {
 	if Disable == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return Disable()
 }
 
@@ -27,6 +33,7 @@ func _on_start() int32 {
 	if Start == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return Start()
 }
 
@@ -35,6 +42,7 @@ func _on_exit() int32 {
 	if Exit == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return Exit()
 }
 
@@ -43,6 +51,7 @@ func _on_private_msg(subType, msgID int32, fromQQ int64, msg *C.char, font int32
 	if PrivateMsg == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return PrivateMsg(subType, msgID, fromQQ, goString(msg), font)
 }
 
@@ -51,6 +60,7 @@ func _on_group_msg(subType, msgID int32, fromGroup, fromQQ int64, fromAnonymous,
 	if GroupMsg == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return GroupMsg(subType, msgID, fromGroup, fromQQ, goString(fromAnonymous), goString(msg), font)
 }
 
@@ -59,6 +69,7 @@ func _on_discuss_msg(sub_type, msg_id int32, from_discuss, from_qq int64, msg *C
 	if DiscussMsg == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return DiscussMsg(sub_type, msg_id, from_discuss, from_qq, goString(msg), font)
 }
 
@@ -67,6 +78,7 @@ func _on_group_upload(sub_type, send_time int32, from_group, from_qq int64, file
 	if GroupUpload == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return GroupUpload(sub_type, send_time, from_group, from_qq, goString(file))
 }
 
@@ -75,6 +87,7 @@ func _on_group_admin(sub_type, send_time int32, from_group, being_operate_qq int
 	if GroupAdmin == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return GroupAdmin(sub_type, send_time, from_group, being_operate_qq)
 }
 
@@ -83,6 +96,7 @@ func _on_group_member_decrease(sub_type, send_time int32, from_group, from_qq, b
 	if GroupMemberDecrease == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return GroupMemberDecrease(sub_type, send_time, from_group, from_qq, being_operate_qq)
 }
 
@@ -91,6 +105,7 @@ func _on_group_member_increase(sub_type, send_time int32, from_group, from_qq, b
 	if GroupMemberIncrease == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return GroupMemberIncrease(sub_type, send_time, from_group, from_qq, being_operate_qq)
 }
 
@@ -99,6 +114,7 @@ func _on_friend_add(sub_type, send_time int32, from_qq int64) int32 {
 	if FriendAdd == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return FriendAdd(sub_type, send_time, from_qq)
 }
 
@@ -107,6 +123,7 @@ func _on_friend_request(sub_type, send_time int32, from_qq int64, msg, response_
 	if FriendRequest == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return FriendRequest(sub_type, send_time, from_qq, goString(msg), goString(response_flag))
 }
 
@@ -115,6 +132,7 @@ func _on_group_request(sub_type, send_time int32, from_group, from_qq int64, msg
 	if GroupRequest == nil {
 		return 0
 	}
+	defer panicToFatal()
 	return GroupRequest(sub_type, send_time, from_group, from_qq, goString(msg), goString(response_flag))
 }
 
@@ -151,3 +169,11 @@ var GroupMemberIncrease func(subType, sendTime int32, fromGroup, fromQQ, beingOp
 var FriendAdd func(subType, sendTime int32, fromQQ int64) int32
 var FriendRequest func(subType, sendTime int32, fromQQ int64, msg, responseFlag string) int32
 var GroupRequest func(subType, sendTime int32, fromGroup, fromQQ int64, msg, responseFlag string) int32
+
+// 捕获panic并调用AddLog(Fatal)
+func panicToFatal() {
+	if v := recover(); v != nil {
+		// 在这里调用debug.Stack()获取调用栈
+		AddLog(Fatal, "go-panic", fmt.Sprintf("%v\n%s", v, debug.Stack()))
+	}
+}

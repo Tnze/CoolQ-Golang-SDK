@@ -1,6 +1,8 @@
 # vscode settings
 .vscode/
-!.vscode/settings.json
+
+# goland settings
+.idea/
 
 # windows
 *.dll
