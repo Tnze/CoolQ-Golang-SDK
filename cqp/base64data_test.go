@@ -31,3 +31,6 @@ func TestUnpackGroupList(t *testing.T) {
 	//TODO(Tnze): 测试其余的值是否正确
 	t.Logf("%#v", list)
 }
+
+//TODO(Tnze): 测试GetFriendList
+//TODO(Tnze): 测试GetGroupInfo

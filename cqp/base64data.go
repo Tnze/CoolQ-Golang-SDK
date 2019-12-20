@@ -111,6 +111,55 @@ func UnpackGroupList(str string) ([]GroupInfo, error) {
 	return list, nil
 }
 
+// UnpackFriendList 解码好友列表
+func UnpackFriendList(str string) ([]FriendInfo, error) {
+	r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(str))
+	//读取好友列表人数
+	var FrdNum int32
+	if err := binary.Read(r, binary.BigEndian, &FrdNum); err != nil {
+		return nil, err
+	}
+
+	//读成员信息
+	friends := make([]FriendInfo, 0, FrdNum)
+	for i := 0; i < int(FrdNum); i++ {
+		var Len int16
+		if err := binary.Read(r, binary.BigEndian, &Len); err != nil {
+			return friends, err
+		}
+
+		data := make([]byte, Len)
+		if err := binary.Read(r, binary.BigEndian, &data); err != nil {
+			return friends, err
+		}
+
+		f, err := readFriendInfo(data)
+		if err != nil {
+			return friends, err
+		}
+
+		friends = append(friends, f)
+	}
+	return friends, nil
+}
+
+// UnpackGroupInfo 解码群信息
+func UnpackGroupInfo(str string) (g GroupDetail, err error) {
+	r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(str))
+	for _, v := range []interface{}{
+		&g.ID,
+		&g.Name,
+		&g.MembersNum,
+		&g.MaxMemberNum,
+	} {
+		err = readField(r, v)
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 func readGroupMember(data []byte) (m GroupMember, err error) {
 	r := bytes.NewReader(data)
 
@@ -132,6 +181,21 @@ func readGroupMember(data []byte) (m GroupMember, err error) {
 		}
 	}
 
+	return
+}
+
+func readFriendInfo(data []byte) (f FriendInfo, err error) {
+	r := bytes.NewReader(data)
+	for _, v := range []interface{}{
+		&f.QQ,
+		&f.Name,
+		&f.Alias,
+	} {
+		err = readField(r, v)
+		if err != nil {
+			return
+		}
+	}
 	return
 }
 
@@ -179,4 +243,16 @@ func readField(r io.Reader, v interface{}) error {
 type GroupInfo struct {
 	ID   int64
 	Name string
+}
+
+type FriendInfo struct {
+	QQ    int64
+	Name  string
+	Alias string
+}
+
+type GroupDetail struct {
+	GroupInfo
+	MembersNum   int32
+	MaxMemberNum int32
 }

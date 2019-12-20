@@ -51,8 +51,9 @@ CQAPI(int32_t, CQ_setGroupAddRequestV2, char *response_flag, int32_t request_typ
 CQAPI(int64_t, CQ_getLoginQQ)
 CQAPI(char *, CQ_getLoginNick)
 CQAPI(char *, CQ_getStrangerInfo, int64_t qq, cq_bool_t no_cache)
-CQAPI(char *, CQ_getFriendList)
+CQAPI(char *, CQ_getFriendList, int32_t reserved)
 CQAPI(char *, CQ_getGroupList)
+CQAPI(char *, CQ_getGroupInfo, int64_t group_id, int32_t no_cache)
 CQAPI(char *, CQ_getGroupMemberList, int64_t group_id)
 CQAPI(char *, CQ_getGroupMemberInfoV2, int64_t group_id, int64_t qq, cq_bool_t no_cache)
 

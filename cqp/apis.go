@@ -94,8 +94,22 @@ func GetCSRFToken() int32 {
 }
 
 // GetFriendList 获取好友列表
-func GetFriendList() string {
-	return goString(C.CQ_getGroupList())
+func GetFriendList() []FriendInfo {
+	raw := goString(C.CQ_getGroupList(cBool(false)))
+	list, err := UnpackFriendList(raw)
+	if err != nil {
+		panic(fmt.Errorf("cqp: 内部错误，酷Q返回的好友列表格式不正确: %v", err))
+	}
+	return list
+}
+
+func GetGroupInfo(group int64, noCatch bool) GroupDetail {
+	raw := goString(C.CQ_getGroupInfo)
+	info, err := UnpackGroupInfo(raw)
+	if err != nil {
+		panic(fmt.Errorf("cqp: 内部错误，酷Q返回的群信息格式不正确: %v", err))
+	}
+	return info
 }
 
 // GetGroupList 获取群列表
