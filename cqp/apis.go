@@ -95,7 +95,7 @@ func GetCSRFToken() int32 {
 
 // GetFriendList 获取好友列表
 func GetFriendList() []FriendInfo {
-	raw := goString(C.CQ_getGroupList(cBool(false)))
+	raw := goString(C.CQ_getFriendList(cBool(false)))
 	list, err := UnpackFriendList(raw)
 	if err != nil {
 		panic(fmt.Errorf("cqp: 内部错误，酷Q返回的好友列表格式不正确: %v", err))
