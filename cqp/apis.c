@@ -78,7 +78,7 @@ char *CQ_getCookiesV2(char *domain) {
 };
 int32_t CQ_getCsrfToken() { return CQ_getCsrfToken_Ptr(ac); }
 char *CQ_getFriendList(int32_t reserved){ return CQ_getFriendList_Ptr(ac, reserved); }
-char *CQ_getGroupInfo(int64_t group_id, int32_t no_cache){return CQ_getFriendList_Ptr(ac, group_id, no_cache)}
+char *CQ_getGroupInfo(int64_t group_id, int32_t no_cache){return CQ_getGroupInfo_Ptr(ac, group_id, no_cache);}
 char *CQ_getGroupList() { return CQ_getGroupList_Ptr(ac); }
 char *CQ_getGroupMemberInfoV2(int64_t GroupNum, int64_t QQ, int32_t NoCatch) { return CQ_getGroupMemberInfoV2_Ptr(ac, GroupNum, QQ, NoCatch); }
 char *CQ_getGroupMemberList(int64_t GroupNum) { return CQ_getGroupMemberList_Ptr(ac, GroupNum); }
