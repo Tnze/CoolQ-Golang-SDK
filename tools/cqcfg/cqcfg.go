@@ -42,7 +42,7 @@ import (
 	"strings"
 )
 
-const version = "2.2"
+const version = "2.3"
 
 // 运行时参数
 var (
@@ -123,7 +123,8 @@ func search(v *ast.Package, APIs map[string]int) {
 }
 
 func handleImportSpec(cqp *string, imp *ast.ImportSpec) {
-	if imp.Path.Value == `"github.com/Tnze/CoolQ-Golang-SDK/cqp"` {
+	if imp.Path.Value == `"github.com/Tnze/CoolQ-Golang-SDK/cqp"` ||
+		imp.Path.Value == `"github.com/Tnze/CoolQ-Golang-SDK/v2/cqp"` {
 		if imp.Name != nil {
 			*cqp = imp.Name.Name
 		} else {
