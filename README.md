@@ -1,6 +1,6 @@
 # CoolQ Golang SDK
 这是酷Q插件原生Go语言SDK  
-[![GoDoc](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp?status.svg)](https://godoc.org/github.com/Tnze/CoolQ-Golang-SDK/cqp)
+[![GoDoc](https://img.shields.io/badge/pkg-documents-blue.svg))](https://pkg.go.dev/github.com/Tnze/CoolQ-Golang-SDK/v2/cqp?tab=doc)
 
 把Go代码编译成dll，而不是基于http接口的网络调用，提高程序运行效率。  
 如果使用中遇到问题，请大胆提issue**喜欢也请Star支持哦** 
