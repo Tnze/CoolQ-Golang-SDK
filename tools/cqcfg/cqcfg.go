@@ -42,7 +42,7 @@ import (
 	"strings"
 )
 
-const version = "2.3"
+const version = "2.4"
 
 // 运行时参数
 var (

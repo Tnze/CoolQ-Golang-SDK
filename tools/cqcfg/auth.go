@@ -21,11 +21,13 @@ var authcode = map[string]int{
 	"GetGroupMemberInfo":   130,
 	"GetGroupMemberInfoV2": 130,
 	"GetStrangerInfo":      131,
+	"GetGroupInfo":		132,
 	"SetDiscussLeave":      140,
 	"SetFriendAddRequest":  150,
 	"SetGroupAddRequest":   151,
 	"GetGroupMemberList":   160,
 	"GetGroupList":         161,
+	"GetFriendList":	162,
 	"DeleteMsg":            180,
 }
 
