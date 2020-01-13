@@ -45,9 +45,10 @@ func onComm(comm string) { //处理cqp注释
 		if *countCommit {
 			c, err := commitCount()
 			if err != nil {
-				log.Fatalf("统计Git提交数失败: %v", err)
+				fmt.Printf("警告: 统计Git提交数失败: %v", err)
+			} else {
+				seq += c
 			}
-			seq += c
 		}
 
 		info.Version = fmt.Sprintf("%d.%d.%d", v1, v2, v3)

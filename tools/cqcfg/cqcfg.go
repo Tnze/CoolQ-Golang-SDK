@@ -36,13 +36,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
-	"strings"
 )
 
-const version = "2.4"
+const version = "2.5"
 
 // 运行时参数
 var (
@@ -157,19 +155,4 @@ func handleSelectorExpr(cqp string, se *ast.SelectorExpr, apis map[string]int) {
 	if x, ok := se.X.(*ast.Ident); ok && cqp != "" && x.Name == cqp {
 		apis[se.Sel.String()]++
 	}
-}
-
-// 统计当前git代码库的提交次数
-func commitCount() (int, error) {
-	cmd := exec.Command("git", "rev-list", "--all", "--count")
-	out, err := cmd.Output()
-	if err != nil {
-		return 0, err
-	}
-
-	seq, err := strconv.Atoi(strings.TrimSpace(string(out)))
-	if err != nil {
-		return 0, err
-	}
-	return seq, nil
 }
