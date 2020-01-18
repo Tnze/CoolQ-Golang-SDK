@@ -28,16 +28,16 @@ func connEvent(urlStr string, requestHeader http.Header) {
 			switch e.MsgType {
 			case "private":
 				if PrivateMsg != nil {
-					PrivateMsg(subTypes[e.SubType], e.MsgID, e.UserID, e.RawMsg, e.Font)
+					go PrivateMsg(subTypes[e.SubType], e.MsgID, e.UserID, e.RawMsg, e.Font)
 				}
 			case "group":
 				if GroupMsg != nil {
-					GroupMsg(subTypes[e.SubType], e.MsgID, e.GroupID, e.UserID, e.Anonymous.Flag, e.RawMsg, e.Font)
+					go GroupMsg(subTypes[e.SubType], e.MsgID, e.GroupID, e.UserID, e.Anonymous.Flag, e.RawMsg, e.Font)
 				}
 			case "discuss":
 				if DiscussMsg != nil {
 					// TODO: 不知道这里的subtype应是什么，暂时放个1在这
-					DiscussMsg(1, e.MsgID, e.DiscussID, e.UserID, e.RawMsg, e.Font)
+					go DiscussMsg(1, e.MsgID, e.DiscussID, e.UserID, e.RawMsg, e.Font)
 				}
 			}
 
