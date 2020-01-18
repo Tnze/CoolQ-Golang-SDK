@@ -17,7 +17,7 @@ func connAPIs(urlStr string, requestHeader http.Header) {
 			WithError(err).
 			Fatal("连接/api失败")
 	}
-	log.WithField("remoteAddr", urlStr).Info("成功连接/api")
+	log.WithField("url", urlStr).Info("成功连接/api")
 
 	// 接收数据
 	for {
@@ -34,4 +34,11 @@ type apiRet struct {
 	RetCode int             `json:"retcode"`
 	Echo    int             `json:"echo"`
 	Data    json.RawMessage `json:"data"`
+}
+
+func SendPrivateMsg(qq int64, msg string) int32 {
+	log.WithField("qq", qq).
+		WithField("msg", msg).
+		Debug("SendPrivateMsg")
+	return 0
 }
