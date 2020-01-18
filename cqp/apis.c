@@ -1,4 +1,4 @@
-// +build windows,386,cgo,!websocket
+// +build !websocket
 
 #include "apis.h"
 #include "events.h"

@@ -1,4 +1,4 @@
-// +build windows,386,cgo,!websocket
+// +build !websocket
 
 package cqp
 
