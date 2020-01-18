@@ -16,7 +16,7 @@ func init() {
 
 // TODO: 恢复空插件
 func onPrivateMsg(subType, msgID int32, fromQQ int64, msg string, font int32) int32 {
-	cqp.SendPrivateMsg(fromQQ, msg) //复读机
+	//cqp.SendPrivateMsg(fromQQ, msg) //复读机
 	log.WithFields(log.Fields{
 		"subType": subType,
 		"msgID":   msgID,
