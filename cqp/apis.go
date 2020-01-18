@@ -1,3 +1,5 @@
+// +build windows,386,cgo,!websocket
+
 package cqp
 
 // #include "apis.h"
@@ -7,19 +9,8 @@ import (
 	sc "golang.org/x/text/encoding/simplifiedchinese"
 )
 
-type Priority int32
-
-// Log优先级（priority, AddLog的第一个参数）
-const (
-	Debug       Priority = 0
-	Info                 = 10
-	InfoSuccess          = 11
-	InfoRecv             = 12
-	InfoSend             = 13
-	Warning              = 20
-	Error                = 30
-	Fatal                = 40
-)
+// Main 原生插件不使用
+func Main() {}
 
 func cString(str string) *C.char {
 	gbstr, _ := sc.GB18030.NewEncoder().String(str)
