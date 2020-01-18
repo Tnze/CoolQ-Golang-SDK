@@ -1,3 +1,5 @@
+// +build windows,386,cgo,!websocket
+
 #include "events.h"
 
 CQEVENT EVENT_ON_ENABLE() { return _on_enable(); }
