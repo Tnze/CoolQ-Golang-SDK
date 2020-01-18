@@ -56,43 +56,94 @@ type apiPayload struct {
 	Echo   int         `json:"echo"`
 }
 
+type apiParams map[string]interface{}
+
+// 接收并检查一般的返回值
+func checkRet(conn *ws.Conn, echo int) int32 {
+	var resp apiRet
+	if err := conn.ReadJSON(&resp); err != nil {
+		log.WithError(err).Error("接收私聊消息响应失败")
+	}
+	// TODO: 检查echo值一致性
+	switch resp.Status {
+	case "ok":
+		log.WithField("echo", resp.Echo).Debug("调用成功")
+	case "async":
+		log.Warning("请求异步处理，具体成功或失败将无法获知。")
+	case "failed":
+		log.WithField("retcode", resp.RetCode).
+			Error("发送私聊消息失败")
+	}
+	return 0
+}
+
+func GetAppDir() string {
+	return *appDir
+}
+
 // SendPrivateMsg 发送私聊消息
 func SendPrivateMsg(qq int64, msg string) int32 {
 	conn := getAPI()
 	defer retAPI()
 
 	echo := rand.Int()
+	log.WithFields(log.Fields{"msg": msg, "qq": qq, "echo": echo}).Debug("发送私聊消息")
 
 	err := conn.WriteJSON(apiPayload{
 		Action: "send_private_msg",
-		Params: struct {
-			UserID  int64  `json:"user_id"`
-			Message string `json:"message"`
-		}{UserID: qq, Message: msg},
-		Echo: echo,
+		Params: apiParams{"user_id": qq, "message": msg},
+		Echo:   echo,
 	})
 	if err != nil {
-		log.WithError(err).
-			Error("发送私聊消息失败")
+		log.WithError(err).Error("发送私聊消息失败")
 	}
 
-	log.WithField("qq", qq).
-		WithField("msg", msg).
-		WithField("echo", echo).
-		Debug("SendPrivateMsg")
+	// 检查调用是否成功
+	checkRet(conn, echo)
+	return 0
+}
 
-	var resp apiRet
-	if err := conn.ReadJSON(&resp); err != nil {
-		log.WithError(err).Error("接收私聊消息响应失败")
+// SendGroupMsg 发送群聊消息
+func SendGroupMsg(qq int64, msg string) int32 {
+	conn := getAPI()
+	defer retAPI()
+
+	echo := rand.Int()
+	log.WithFields(log.Fields{"msg": msg, "qq": qq, "echo": echo}).Debug("发送私聊消息")
+
+	err := conn.WriteJSON(apiPayload{
+		Action: "send_private_msg",
+		Params: apiParams{"user_id": qq, "message": msg},
+		Echo:   echo,
+	})
+	if err != nil {
+		log.WithError(err).Error("发送私聊消息失败")
 	}
-	log.WithField("echo", resp.Echo).Debug("响应")
-	switch resp.Status {
-	case "ok":
-	case "async":
-		log.Warning("请求异步处理，具体成功或失败将无法获知。")
-	case "failed":
-		log.WithField("retcode", resp.RetCode).
-			Error("发送私聊消息失败")
+
+	// 检查调用是否成功
+	checkRet(conn, echo)
+	return 0
+}
+
+// AddLog 增加运行日志
+// 	priority 是Log的优先级，请使用cqp预定义好的值。
+// 	logType 是日志类型，酷Q日志窗口将将其显示在日志本身的前一列。
+// 	reason 是日志内容
+func AddLog(p Priority, logType, reason string) int32 {
+	ent := log.WithField("logType", logType)
+	switch p {
+	case Debug:
+		ent.Debug(reason)
+	case Info, InfoSuccess, InfoRecv, InfoSend:
+		ent.Info(reason)
+	case Warning:
+		ent.Warning(reason)
+	case Error:
+		ent.Error(reason)
+	case Fatal:
+		ent.Fatal(reason)
+	default:
+		ent.Panic("未知优先级日志：", reason)
 	}
 	return 0
 }
