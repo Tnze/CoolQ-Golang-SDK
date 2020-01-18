@@ -4,6 +4,10 @@ package cqp
 
 // #include "events.h"
 import "C"
+import (
+	"fmt"
+	"runtime/debug"
+)
 
 //export _appinfo
 func _appinfo() *C.char { return C.CString("9," + AppID) }
