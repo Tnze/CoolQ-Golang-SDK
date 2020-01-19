@@ -51,8 +51,8 @@ func Main() {
 		requestHeader.Add("Authorization", "Token "+*accessToken)
 	}
 
-	go connAPIs(apiURL.String(), requestHeader)
-	go connEvent(eventURL.String(), requestHeader)
+	connAPIs(apiURL.String(), requestHeader)
+	connEvent(eventURL.String(), requestHeader)
 
 	if Enable != nil {
 		Enable()

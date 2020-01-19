@@ -14,41 +14,41 @@ func connEvent(urlStr string, requestHeader http.Header) {
 		log.WithError(err).Fatal("连接/event失败")
 	}
 	log.WithField("url", urlStr).Info("成功连接/event")
-	// 接收数据
-	for {
-		var e event
-		if err := conn.ReadJSON(&e); err != nil {
-			log.WithError(err).Fatal("接收Event出错")
-		}
-		log.WithField("e", e).Debug("事件触发")
-
-		// 根据post_type对事件分类处理
-		switch e.PostType {
-		case "message":
-			switch e.MsgType {
-			case "private":
-				if PrivateMsg != nil {
-					go PrivateMsg(subTypes[e.SubType], e.MsgID, e.UserID, e.RawMsg, e.Font)
-				}
-			case "group":
-				if GroupMsg != nil {
-					go GroupMsg(subTypes[e.SubType], e.MsgID, e.GroupID, e.UserID, e.Anonymous.Flag, e.RawMsg, e.Font)
-				}
-			case "discuss":
-				if DiscussMsg != nil {
-					// TODO: 不知道这里的subtype应是什么，暂时放个1在这
-					go DiscussMsg(1, e.MsgID, e.DiscussID, e.UserID, e.RawMsg, e.Font)
-				}
+	go func() { // 接收数据
+		for {
+			var e event
+			if err := conn.ReadJSON(&e); err != nil {
+				log.WithError(err).Fatal("接收Event出错")
 			}
+			log.WithField("e", e).Debug("事件触发")
 
-		case "notice":
-		case "request":
-		default:
-			log.WithField("e", e).
-				Error("未知的post_type")
+			// 根据post_type对事件分类处理
+			switch e.PostType {
+			case "message":
+				switch e.MsgType {
+				case "private":
+					if PrivateMsg != nil {
+						go PrivateMsg(subTypes[e.SubType], e.MsgID, e.UserID, e.RawMsg, e.Font)
+					}
+				case "group":
+					if GroupMsg != nil {
+						go GroupMsg(subTypes[e.SubType], e.MsgID, e.GroupID, e.UserID, e.Anonymous.Flag, e.RawMsg, e.Font)
+					}
+				case "discuss":
+					if DiscussMsg != nil {
+						// TODO: 不知道这里的subtype应是什么，暂时放个1在这
+						go DiscussMsg(1, e.MsgID, e.DiscussID, e.UserID, e.RawMsg, e.Font)
+					}
+				}
+
+			case "notice":
+			case "request":
+			default:
+				log.WithField("e", e).
+					Error("未知的post_type")
+			}
 		}
-	}
-
+	}()
 }
 
 var subTypes = map[string]int32{

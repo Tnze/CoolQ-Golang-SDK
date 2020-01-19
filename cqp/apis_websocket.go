@@ -59,10 +59,10 @@ type apiPayload struct {
 type apiParams map[string]interface{}
 
 // 接收并检查一般的返回值
-func checkRet(conn *ws.Conn, echo int) int32 {
+func checkRet(conn *ws.Conn, echo int, data interface{}) int32 {
 	var resp apiRet
 	if err := conn.ReadJSON(&resp); err != nil {
-		log.WithError(err).Error("接收私聊消息响应失败")
+		log.WithError(err).Error("接收API响应失败")
 	}
 	// TODO: 检查echo值一致性
 	switch resp.Status {
@@ -72,13 +72,41 @@ func checkRet(conn *ws.Conn, echo int) int32 {
 		log.Warning("请求异步处理，具体成功或失败将无法获知。")
 	case "failed":
 		log.WithField("retcode", resp.RetCode).
-			Error("发送私聊消息失败")
+			Error("调用API失败")
+		return 1
+	}
+	if data != nil {
+		if err := json.Unmarshal(resp.Data, data); err != nil {
+			log.WithError(err).Error("解析响应数据失败")
+			return 1
+		}
 	}
 	return 0
 }
 
 func GetAppDir() string {
 	return *appDir
+}
+
+//GetLoginQQ 获取登陆号QQ
+func GetLoginQQ() int64 {
+	conn := getAPI()
+	defer retAPI()
+
+	echo := rand.Int()
+	log.WithFields(log.Fields{"echo": echo}).Debug("获取登录QQ")
+
+	err := conn.WriteJSON(apiPayload{Action: "get_login_info", Params: nil, Echo: echo})
+	if err != nil {
+		log.WithError(err).Error("获取登录QQ失败")
+	}
+
+	var resp struct {
+		UserID   int64  `json:"user_id"`
+		Nickname string `json:"nickname"`
+	}
+	checkRet(conn, echo, &resp)
+	return resp.UserID
 }
 
 // SendPrivateMsg 发送私聊消息
@@ -99,7 +127,7 @@ func SendPrivateMsg(qq int64, msg string) int32 {
 	}
 
 	// 检查调用是否成功
-	checkRet(conn, echo)
+	checkRet(conn, echo, nil)
 	return 0
 }
 
@@ -121,7 +149,7 @@ func SendGroupMsg(qq int64, msg string) int32 {
 	}
 
 	// 检查调用是否成功
-	checkRet(conn, echo)
+	checkRet(conn, echo, nil)
 	return 0
 }
 
