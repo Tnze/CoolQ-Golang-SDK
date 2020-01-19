@@ -132,20 +132,20 @@ func SendPrivateMsg(qq int64, msg string) int32 {
 }
 
 // SendGroupMsg 发送群聊消息
-func SendGroupMsg(qq int64, msg string) int32 {
+func SendGroupMsg(group int64, msg string) int32 {
 	conn := getAPI()
 	defer retAPI()
 
 	echo := rand.Int()
-	log.WithFields(log.Fields{"msg": msg, "qq": qq, "echo": echo}).Debug("发送私聊消息")
+	log.WithFields(log.Fields{"msg": msg, "group": group, "echo": echo}).Debug("发送群聊消息")
 
 	err := conn.WriteJSON(apiPayload{
-		Action: "send_private_msg",
-		Params: apiParams{"user_id": qq, "message": msg},
+		Action: "send_group_msg",
+		Params: apiParams{"group_id": group, "message": msg},
 		Echo:   echo,
 	})
 	if err != nil {
-		log.WithError(err).Error("发送私聊消息失败")
+		log.WithError(err).Error("发送群聊消息失败")
 	}
 
 	// 检查调用是否成功
