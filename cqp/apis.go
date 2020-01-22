@@ -152,9 +152,7 @@ func GetLoginQQ() int64 {
 }
 
 // GetRecord 获取语音
-// file参数为CQ码内容，format为插件所需格式，返回值应该是文件路径
-//
-// 需要严格授权
+// file参数为CQ码内容，format为插件所需格式，返回语音文件路径
 func GetRecord(file, format string) string {
 	return goString(C.CQ_getRecord(
 		cString(file), cString(format),
@@ -162,9 +160,7 @@ func GetRecord(file, format string) string {
 }
 
 // GetRecordV2 获取语音
-// 应该同GetRecord
-//
-// 需要严格授权
+// 与GetRecord不同之处在于V2返回绝对路径
 func GetRecordV2(file, format string) string {
 	return goString(C.CQ_getRecordV2(
 		cString(file), cString(format),
