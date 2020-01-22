@@ -160,6 +160,22 @@ func UnpackGroupInfo(str string) (g GroupDetail, err error) {
 	return
 }
 
+// UnpackStrangerInfo 解码匿名信息
+func UnpackStrangerInfo(str string) (s StrangerInfo, err error) {
+	r := base64.NewDecoder(base64.StdEncoding, strings.NewReader(str))
+	for _, v := range []interface{}{
+		&s.ID,
+		&s.Name,
+		&s.Token,
+	} {
+		err = readField(r, v)
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 func readGroupMember(data []byte) (m GroupMember, err error) {
 	r := bytes.NewReader(data)
 
@@ -207,7 +223,7 @@ func readField(r io.Reader, v interface{}) error {
 	case *int64, *int32, *int16:
 		return binary.Read(r, binary.BigEndian, v)
 
-	case *string:
+	case *string, *[]byte:
 		var len int16
 		if err := binary.Read(r, binary.BigEndian, &len); err != nil {
 			return err
@@ -219,7 +235,11 @@ func readField(r io.Reader, v interface{}) error {
 		}
 
 		str, err := sc.GB18030.NewDecoder().Bytes(buff)
-		*v.(*string) = string(str)
+		if _, ok := v.(*[]byte); ok {
+			*v.(*[]byte) = str
+		} else {
+			*v.(*string) = string(str)
+		}
 		return err
 
 	case *bool:
@@ -255,4 +275,10 @@ type GroupDetail struct {
 	GroupInfo
 	MembersNum   int32
 	MaxMemberNum int32
+}
+
+type StrangerInfo struct {
+	ID    int64
+	Name  string
+	Token []byte
 }
