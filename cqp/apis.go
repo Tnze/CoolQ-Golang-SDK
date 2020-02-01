@@ -88,7 +88,7 @@ func GetFriendList() []FriendInfo {
 	raw := goString(C.CQ_getFriendList(cBool(false)))
 	list, err := UnpackFriendList(raw)
 	if err != nil {
-		panic(unpackError{API: "好友列表", Raw: raw, Error: err})
+		panic(unpackError{API: "好友列表", Raw: raw, Err: err})
 	}
 	return list
 }
@@ -97,7 +97,7 @@ func GetGroupInfo(group int64, noCatch bool) GroupDetail {
 	raw := goString(C.CQ_getGroupInfo(C.int64_t(group), cBool(noCatch)))
 	info, err := UnpackGroupInfo(raw)
 	if err != nil {
-		panic(unpackError{API: "群信息", Raw: raw, Error: err})
+		panic(unpackError{API: "群信息", Raw: raw, Err: err})
 	}
 	return info
 }
@@ -107,7 +107,7 @@ func GetGroupList() []GroupInfo {
 	raw := goString(C.CQ_getGroupList())
 	list, err := UnpackGroupList(raw)
 	if err != nil {
-		panic(unpackError{API: "群列表", Raw: raw, Error: err})
+		panic(unpackError{API: "群列表", Raw: raw, Err: err})
 	}
 	return list
 }
@@ -119,7 +119,7 @@ func GetGroupMemberInfo(group, qq int64, noCatch bool) GroupMember {
 	))
 	member, err := UnpackGroupMemberInfo(raw)
 	if err != nil {
-		panic(unpackError{API: "群成员信息", Raw: raw, Error: err})
+		panic(unpackError{API: "群成员信息", Raw: raw, Err: err})
 	}
 	return member
 }
@@ -129,7 +129,7 @@ func GetGroupMemberList(group int64) []GroupMember {
 	raw := goString(C.CQ_getGroupMemberList(C.int64_t(group)))
 	list, err := UnpackGroupMemberList(raw)
 	if err != nil {
-		panic(unpackError{API: "群成员列表", Raw: raw, Error: err})
+		panic(unpackError{API: "群成员列表", Raw: raw, Err: err})
 	}
 	return list
 }
@@ -137,13 +137,17 @@ func GetGroupMemberList(group int64) []GroupMember {
 // unpackError 当解码酷Q返回的数据出错时可能会被某些API返回
 // Deprecated: 应当仅仅被用于SDK调试
 type unpackError struct {
-	Error error
-	API   string
-	Raw   string
+	Err error
+	API string
+	Raw string
 }
 
 func (u *unpackError) Error() string {
-	return "cqp: 内部错误，酷Q返回的" + u.API + "格式不正确: " + u.Error.Error()
+	return "cqp: 内部错误，酷Q返回的" + u.API + "格式不正确: " + u.Err.Error()
+}
+
+func (u *unpackError) Unwrap() error {
+	return u.Err
 }
 
 // GetImage 获取图片
