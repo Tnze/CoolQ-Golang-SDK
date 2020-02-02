@@ -40,7 +40,7 @@ import (
 	"strconv"
 )
 
-const version = "2.5"
+const version = "2.6"
 
 // 运行时参数
 var (
