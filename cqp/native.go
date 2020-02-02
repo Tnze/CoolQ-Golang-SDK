@@ -34,3 +34,17 @@ package cqp
 //cqapi CQ_canSendImage()bool
 //cqapi CQ_canSendRecord()bool
 //cqapi CQ_addLog(int32,string,string)int32
+//cqevent ENABLE()int32
+//cqevent DISABLE()
+//cqevent START()int32
+//cqevent EXIT()int32
+//cqevent PRIVATE_MSG(int32,int32,int64,string,int32)int32
+//cqevent GROUP_MSG(int32,int32,int64,int64,string,string,int32)int32
+//cqevent DISCUSS_MSG(int32,int32,int64,int64,string,int32)int32
+//cqevent GROUP_UPLOAD(int32,int32,int64,int64,string)int32
+//cqevent GROUP_ADMIN(int32,int32,int64,int64)int32
+//cqevent GROUP_MEMBER_DECREASE(int32,int32,int64,int64,int64)int32
+//cqevent GROUP_MEMBER_INCREASE(int32,int32,int64,int64,int64)int32
+//cqevent FRIEND_ADD(int32,int32,int64)int32
+//cqevent FRIEND_REQUEST(int32,int32,int64,string,string)int32
+//cqevent GROUP_REQUEST(int32,int32,int64,int64,string,string)int32
