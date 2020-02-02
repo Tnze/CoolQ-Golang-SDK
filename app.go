@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/Tnze/CoolQ-Golang-SDK/v2/cqp"
+	"github.com/Tnze/CoolQ-Golang-SDK/v3/cqp"
 	log "github.com/sirupsen/logrus"
 )
 
