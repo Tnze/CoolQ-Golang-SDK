@@ -2,7 +2,10 @@
 
 package cqp
 
-import "C"
+import (
+	"fmt"
+	"runtime/debug"
+)
 
 func Main() {}
 
@@ -79,4 +82,12 @@ func (u *unpackError) Error() string {
 
 func (u *unpackError) Unwrap() error {
 	return u.Err
+}
+
+// 捕获panic并调用AddLog(Fatal)
+func panicToFatal() {
+	if v := recover(); v != nil {
+		// 在这里调用debug.Stack()获取调用栈
+		AddLog(Fatal, "panic", fmt.Sprintf("%v\n%s", v, debug.Stack()))
+	}
 }

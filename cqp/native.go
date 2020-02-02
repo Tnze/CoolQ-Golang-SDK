@@ -35,7 +35,7 @@ package cqp
 //cqapi CQ_canSendRecord()bool
 //cqapi CQ_addLog(int32,string,string)int32
 //cqevent ENABLE()int32
-//cqevent DISABLE()
+//cqevent DISABLE()int32
 //cqevent START()int32
 //cqevent EXIT()int32
 //cqevent PRIVATE_MSG(int32,int32,int64,string,int32)int32
