@@ -65,14 +65,7 @@ func GetAppDir() string {
 // GetCookies 获取cookies
 //
 // 需要严格授权
-func GetCookies() string {
-	return goString(C.CQ_getCookies())
-}
-
-// GetCookiesV2 获取cookies V2
-//
-// 需要严格授权
-func GetCookiesV2(domain string) string {
+func GetCookies(domain string) string {
 	return goString(C.CQ_getCookiesV2(cString(domain)))
 }
 
@@ -135,7 +128,6 @@ func GetGroupMemberList(group int64) []GroupMember {
 }
 
 // unpackError 当解码酷Q返回的数据出错时可能会被某些API返回
-// Deprecated: 应当仅仅被用于SDK调试
 type unpackError struct {
 	Err error
 	API string
@@ -167,16 +159,8 @@ func GetLoginQQ() int64 {
 }
 
 // GetRecord 获取语音
-// file参数为CQ码内容，format为插件所需格式，返回语音文件路径
+// file参数为CQ码内容，format为插件所需格式，返回语音文件绝对路径
 func GetRecord(file, format string) string {
-	return goString(C.CQ_getRecord(
-		cString(file), cString(format),
-	))
-}
-
-// GetRecordV2 获取语音
-// 与GetRecord不同之处在于V2返回绝对路径
-func GetRecordV2(file, format string) string {
 	return goString(C.CQ_getRecordV2(
 		cString(file), cString(format),
 	))
@@ -184,10 +168,15 @@ func GetRecordV2(file, format string) string {
 
 // GetStrangerInfo 获取陌生人信息
 // noCatch指定是否使用缓存
-func GetStrangerInfo(qq int64, noCatch bool) string {
-	return goString(C.CQ_getStrangerInfo(
+func GetStrangerInfo(qq int64, noCatch bool) StrangerInfo {
+	raw := goString(C.CQ_getStrangerInfo(
 		C.int64_t(qq), cBool(noCatch),
 	))
+	info, err := UnpackStrangerInfo(raw)
+	if err != nil {
+		panic(unpackError{API: "陌生人信息", Raw: raw, Err: err})
+	}
+	return info
 }
 
 // SendDiscussMsg 发送讨论组消息
@@ -205,13 +194,8 @@ func SendGroupMsg(group int64, msg string) int32 {
 }
 
 // SendLike 发送赞
-func SendLike(qq int64) int32 {
-	return int32(C.CQ_sendLike(C.int64_t(qq)))
-}
-
-// SendLike2 发送赞2
 // times指定赞的次数
-func SendLike2(qq int64, times int32) int32 {
+func SendLike(qq int64, times int32) int32 {
 	return int32(C.CQ_sendLikeV2(
 		C.int64_t(qq), C.int32_t(times),
 	))
@@ -245,15 +229,7 @@ func SetFriendAddRequest(ReqFeedback string, FeedbackType int32, remark string) 
 		cString(remark),
 	))
 }
-
-func SetGroupAddRequest(ReqFeedback string, ReqType, FeedbackType int32) int32 {
-	return int32(C.CQ_setGroupAddRequest(
-		cString(ReqFeedback),
-		C.int32_t(ReqType), C.int32_t(FeedbackType),
-	))
-}
-
-func SetGroupAddRequest2(ReqFeedback string, ReqType, FeedbackType int32, reason string) int32 {
+func SetGroupAddRequest(ReqFeedback string, ReqType, FeedbackType int32, reason string) int32 {
 	return int32(C.CQ_setGroupAddRequestV2(
 		cString(ReqFeedback),
 		C.int32_t(ReqType), C.int32_t(FeedbackType),
@@ -339,6 +315,6 @@ func SetGroupWholeBan(group int64, ban bool) int32 {
 }
 
 // SetRestart 未知函数，请不要调用
-func SetRestart() int32 {
-	return int32(C.CQ_setRestart())
-}
+//func SetRestart() int32 {
+//	return int32(C.CQ_setRestart())
+//}
