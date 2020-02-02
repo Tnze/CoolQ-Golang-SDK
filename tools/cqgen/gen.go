@@ -247,7 +247,7 @@ func _appinfo() *C.char { return C.CString("9," + AppID) }
 		}
 		ef.WriteString(") " + e.ret + " {\n")
 		camelName := ToCamel(name)
-		ef.WriteString("    if " + camelName + " != nil {\n        return 0\n    }\n    defer panicToFatal()\n")
+		ef.WriteString("    if " + camelName + " == nil {\n        return 0\n    }\n    defer panicToFatal()\n")
 		ef.WriteString("    return " + camelName + "(")
 		if len(e.args) > 0 {
 			ef.WriteString(convGo[e.args[0]] + "(var0)")

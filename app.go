@@ -3,7 +3,6 @@ package main
 
 import (
 	"github.com/Tnze/CoolQ-Golang-SDK/v3/cqp"
-	log "github.com/sirupsen/logrus"
 )
 
 func main() { cqp.Main() }
@@ -13,7 +12,6 @@ func init() {
 	cqp.AppID = "your.app.id"
 	cqp.PrivateMsg = onPrivateMsg
 	cqp.Enable = func() int32 {
-		log.Printf("登录QQ: %d", cqp.GetLoginQQ())
 		return 0
 	}
 }
