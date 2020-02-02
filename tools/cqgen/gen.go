@@ -70,8 +70,6 @@ package cqp
 
 #define LoadAPI(Name) Name##_Ptr = (Name##_Type)GetProcAddress(hmod, #Name)
 
-extern char *__stdcall AppInfo(){ return _appinfo(); }
-
 int32_t ac; //AccessCode
 `)
 	for _, api := range c.apis {
@@ -94,16 +92,13 @@ int32_t ac; //AccessCode
 
 	for _, api := range c.apis {
 		w.WriteString(cTypes[api.ret] + " " + api.name + "(")
-		if len(api.args) == 1 && api.args[0] != "" {
-			w.WriteString(cTypes[api.args[0]] + " var0")
-
-		} else if len(api.args) > 1 {
+		if len(api.args) > 0 {
 			w.WriteString(cTypes[api.args[0]] + " var0")
 			for i, arg := range api.args[1:] {
 				w.WriteString(", " + cTypes[arg] + " var" + strconv.Itoa(i+1))
 			}
 		}
-		w.WriteString(")\n{\n    " + cTypes[api.ret] + " ret = " + api.name + "(ac")
+		w.WriteString(")\n{\n    " + cTypes[api.ret] + " ret = " + api.name + "_Ptr(ac")
 		for i := range api.args {
 			w.WriteString(", var" + strconv.Itoa(i))
 		}
@@ -118,7 +113,48 @@ int32_t ac; //AccessCode
 
 	w.WriteString(`*/
 import "C"
+import sc "golang.org/x/text/encoding/simplifiedchinese"
+
+func cString(str string) *C.char {
+	gbstr, _ := sc.GB18030.NewEncoder().String(str)
+	return C.CString(gbstr)
+}
+
+func goString(str *C.char) string {
+	utf8str, _ := sc.GB18030.NewDecoder().String(C.GoString(str))
+	return utf8str
+}
+
+func cBool(b bool) C.int32_t {
+	if b {
+		return 1
+	}
+	return 0
+}
 `)
+	for _, api := range c.apis {
+		name := strings.TrimPrefix(api.name, "CQ_")
+		if api.alias != "" {
+			name = api.alias
+		}
+		w.WriteString("func " + name + "(")
+		if len(api.args) > 0 {
+			w.WriteString("var0 " + api.args[0])
+			for i, arg := range api.args[1:] {
+				w.WriteString(", var" + strconv.Itoa(i+1) + " " + arg)
+			}
+		}
+		w.WriteString(") " + api.ret + " {\n")
+		w.WriteString("    return " + convGo[api.ret] + "(C." + api.name + "(")
+		if len(api.args) > 0 {
+			w.WriteString("\n        ")
+			for i, arg := range api.args {
+				w.WriteString(convC[arg] + "(var" + strconv.Itoa(i) + "), ")
+			}
+			w.WriteString("\n    ")
+		}
+		w.WriteString("))\n}\n")
+	}
 }
 
 func (c cqp) genEvents(sb *strings.Builder) {
@@ -126,9 +162,10 @@ func (c cqp) genEvents(sb *strings.Builder) {
 }
 
 type cqapi struct {
-	name string
-	args []string
-	ret  string
+	name  string
+	args  []string
+	ret   string
+	alias string //是否生成最终api
 }
 
 func (c cqapi) String() string {
@@ -141,10 +178,15 @@ func (c *cqp) addAPI(s string) error {
 	if len(sb) != 4 {
 		return errors.New("format error")
 	}
+	args := strings.Split(sb[2], ",")
+	if len(args) == 1 && args[0] == "" {
+		args = args[:0]
+	}
 	c.apis = append(c.apis, cqapi{
-		name: sb[1],
-		args: strings.Split(sb[2], ","),
-		ret:  sb[3],
+		name:  sb[1],
+		args:  args,
+		ret:   sb[3],
+		alias: strings.TrimSpace(s[len(sb[0]):]),
 	})
 	return nil
 }
@@ -154,4 +196,18 @@ var cTypes = map[string]string{
 	"int32":  "int32_t",
 	"int64":  "int64_t",
 	"string": "char *",
+}
+
+var convC = map[string]string{
+	"bool":   "cBool",
+	"int32":  "C.int32_t",
+	"int64":  "C.int64_t",
+	"string": "cString",
+}
+
+var convGo = map[string]string{
+	"bool":   "0 != ",
+	"int32":  "int32",
+	"int64":  "int64",
+	"string": "goString",
 }

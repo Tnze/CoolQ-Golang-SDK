@@ -12,6 +12,8 @@ import (
 //export _appinfo
 func _appinfo() *C.char { return C.CString("9," + AppID) }
 
+//extern char *__stdcall AppInfo(){ return _appinfo(); }
+
 //export _on_enable
 func _on_enable() int32 {
 	if Enable == nil {

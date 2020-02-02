@@ -20,17 +20,17 @@ package cqp
 //cqapi CQ_setGroupAddRequestV2(string,int32,int32,string)int32
 //cqapi CQ_getLoginQQ()int64
 //cqapi CQ_getLoginNick()string
-//cqapi CQ_getStrangerInfo(int64,bool)string
-//cqapi CQ_getFriendList(int32)string
-//cqapi CQ_getGroupList()string
-//cqapi CQ_getGroupInfo(int64,bool)string
-//cqapi CQ_getGroupMemberList(int64)string
-//cqapi CQ_getGroupMemberInfoV2(int64,int64,bool)string
+//cqapi CQ_getStrangerInfo(int64,bool)string			getRawStrangerInfo
+//cqapi CQ_getFriendList(bool)string					getRawFriendList
+//cqapi CQ_getGroupList()string							getRawGroupList
+//cqapi CQ_getGroupInfo(int64,bool)string				getRawGroupInfo
+//cqapi CQ_getGroupMemberList(int64)string				getRawGroupMemberList
+//cqapi CQ_getGroupMemberInfoV2(int64,int64,bool)string	getRawGroupMemberInfoV2
 //cqapi CQ_getCookiesV2(string)string
 //cqapi CQ_getCsrfToken()int32
 //cqapi CQ_getAppDirectory()string
 //cqapi CQ_getRecordV2(string,string)string
 //cqapi CQ_getImage(string)string
-//cqapi CQ_canSendImage()int32
-//cqapi CQ_canSendRecord()int32
+//cqapi CQ_canSendImage()bool
+//cqapi CQ_canSendRecord()bool
 //cqapi CQ_addLog(int32,string,string)int32
