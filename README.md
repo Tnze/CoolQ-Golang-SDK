@@ -9,6 +9,18 @@
 
 特色：工具分析源码，自动生成app.json
 
+## 关于SDK版本的说明
+
+本SDK使用了最新的go modules机制用于管理版本，并且由于一次取群成员列表的API更新，
+升级了主版本号到v2，但是由于导入路径变更导致了很多麻烦。
+
+直到某一天（就是我写这段字的今天），Tnze终于受不了了，他决定将原本准备发布到v3的更新，
+直接推到v1版本，这会导致之前用v1版本SDK编写，并且使用了原始取成员列表接口的插件
+（很可能不存在），
+更新后会无法通过编译，在这里说一声抱歉。请更新代码或者不要更新SDK。
+
+今后的SDK更新都会在v1下进行，v2则不再维护。即v1比v2更新，请新项目不要使用v2。
+
 ## 推荐使用方法
 1. 使用[模板](https://github.com/Tnze/CoolQ-Golang-Plugin)创建你的插件👉[![UseTemplate](https://img.shields.io/badge/-Use_Template-success)](https://github.com/Tnze/CoolQ-Golang-Plugin/generate)
 1. 查看模板的README
