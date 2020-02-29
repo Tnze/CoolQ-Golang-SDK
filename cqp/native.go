@@ -1,6 +1,6 @@
 package cqp
 
-//go:generate go run github.com/Tnze/CoolQ-Golang-SDK/v3/tools/cqgen $GOFILE
+//go:generate go run github.com/Tnze/CoolQ-Golang-SDK/tools/cqgen $GOFILE
 //cqapi CQ_sendPrivateMsg(int64,string)int32
 //cqapi CQ_sendGroupMsg(int64,string)int32
 //cqapi CQ_sendDiscussMsg(int64,string)int32

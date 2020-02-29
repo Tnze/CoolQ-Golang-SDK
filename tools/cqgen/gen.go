@@ -1,3 +1,4 @@
+// 自动创建API和Event的C语言绑定
 package main
 
 import "C"

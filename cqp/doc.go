@@ -22,7 +22,7 @@
 //		// 当插件启用时被调用
 //	}
 //
-// Build 编译
+// Build tools
 //
 // 当写完基本的代码之后可以将它编译成dll。
 // 插件的编译需要在windows环境下进行，
@@ -33,6 +33,21 @@
 // 其中go工具可以从https://golang.google.cn 下载
 // 没有gcc可以安装TDM-GCC http://tdm-gcc.tdragon.net/
 //
+// Generate app.json
+//
+// 推荐使用tools/cqcfg工具自动生成和更新app.json。
+// 使用go get命令安装cqcfg工具，执行完毕后会在GOPATH或者GOBIN下生成可执行文件。
+//	go get github.com/Tnze/CoolQ-Golang-SDK/tools/cqcfg
+// 安装完毕后应当可以在命令提示符中使用cqcfg命令，-v参数用于查看版本。
+//	cqcfg -v
+// 如果安装后仍提示找不到cqcfg命令请确保GOPATH/bin路径存在于PATH环境变量中。
+//
+// 接下来，执行如下命令，生成app.json
+//	cqcfg -c .
+// 其中"-c"代表将git commit次数加到顺序版本号上，"."代表分析当前目录的源码。
+//
+// Build app.dll
+//
 // 编译时需要设置几个环境变量：
 //	CGO_LDFLAGS=-Wl,--kill-at
 //	CGO_ENABLED=1
@@ -41,11 +56,4 @@
 // 然后执行编译命令：
 //	go build -ldflags "-s -w" -buildmode=c-shared -o app.dll
 // 若成功编译则会生成app.dll，将其和app.json一起复制到酷Q的指定文件夹内即可
-//
-// 函数调用顺序说明
-//	API调用顺序：用户代码 -> Go函数 -> C函数 -> 酷Q函数指针
-//	例:           -> AddLog() -> CQ_addLog() -> CQ_addLog_Ptr
-//
-//	Event调用顺序：酷Q -> C函数 -> Go导出函数 -> Go函数
-//	例:           -> EVENT_ON_ENABLE() -> _on_enable() -> Enable()
 package cqp

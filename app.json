@@ -1,147 +1,22 @@
 {
-    "ret": 1, // 返回码，固定为1
-    "apiver": 9, // Api版本，本SDK为9
-    "name": "GoCQ", // 应用名称
-    "version": "1.0.0", // 应用版本
-    "version_id": 1, // 应用顺序版本（每次发布时至少+1）
-    "author": "Your Name", // 应用作者
-    "description": "Golang酷Q样例应用(V9应用机制)",
-    "event": [ // 事件列表，同一事件类型可重复定义（发布前请删除无用事件）
-        {
-            "id": 1003,
-            "type": 1003,
-            "name": "插件启用",
-            "priority": 20000,
-            "function": "EVENT_ON_ENABLE"
-        },
-        {
-            "id": 1004,
-            "type": 1004,
-            "name": "插件停用",
-            "priority": 20000,
-            "function": "EVENT_ON_DISABLE"
-        },
-        {
-            "id": 1001,
-            "type": 1001,
-            "name": "酷Q启动",
-            "priority": 20000,
-            "function": "EVENT_ON_START"
-        },
-        {
-            "id": 1002,
-            "type": 1002,
-            "name": "酷Q退出",
-            "priority": 20000,
-            "function": "EVENT_ON_EXIT"
-        },
-        {
-            "id": 1,
-            "type": 21,
-            "name": "私聊消息",
-            "function": "EVENT_ON_PRIVATE_MSG",
-            "priority": 20000
-        },
-        {
-            "id": 2,
-            "type": 2,
-            "name": "群消息",
-            "function": "EVENT_ON_GROUP_MSG",
-            "priority": 20000
-        },
-        {
-            "id": 3,
-            "type": 4,
-            "name": "讨论组消息",
-            "function": "EVENT_ON_DISCUSS_MSG",
-            "priority": 20000
-        },
-        {
-            "id": 4,
-            "type": 11,
-            "name": "群文件上传",
-            "function": "EVENT_ON_GROUP_UPLOAD",
-            "priority": 20000
-        },
-        {
-            "id": 5,
-            "type": 101,
-            "name": "群管理员变动",
-            "function": "EVENT_ON_GROUP_ADMIN",
-            "priority": 20000
-        },
-        {
-            "id": 6,
-            "type": 102,
-            "name": "群成员减少",
-            "function": "EVENT_ON_GROUP_MEMBER_DECREASE",
-            "priority": 20000
-        },
-        {
-            "id": 7,
-            "type": 103,
-            "name": "群成员增加",
-            "function": "EVENT_ON_GROUP_MEMBER_INCREASE",
-            "priority": 20000
-        },
-        {
-            "id": 10,
-            "type": 201,
-            "name": "好友添加",
-            "function": "EVENT_ON_FRIEND_ADD",
-            "priority": 20000
-        },
-        {
-            "id": 8,
-            "type": 301,
-            "name": "加好友请求",
-            "function": "EVENT_ON_FRIEND_REQUEST",
-            "priority": 20000
-        },
-        {
-            "id": 9,
-            "type": 302,
-            "name": "加群请求／邀请",
-            "function": "EVENT_ON_GROUP_REQUEST",
-            "priority": 20000
-        }
-    ],
-    "menu": [
-        // 由于Go编写GUI有困难，此处暂时空着
-        // 如有强烈的需求要用到菜单，可以自行
-        // 导出函数并写在此处，用户点击按钮时即会被调用。
-        // {
-        //     "name": "菜单一", //菜单名称
-        //     "function": "YOUR_HANDLE_FUNCTION" //菜单对应函数
-        // }
-    ],
-    "status": [ // 悬浮窗状态
-    ],
-    "auth": [
-        //20,  //[敏感]取Cookies    getCookies / getCsrfToken
-        //30,  //接收语音           getRecord
-        101,   //发送群消息         sendGroupMsg
-        103,   //发送讨论组消息     sendDiscussMsg
-        106,   //发送私聊消息       sendPrivateMsg
-        //110, //[敏感]发送赞       sendLike
-        120,   //置群员移除         setGroupKick
-        121,   //置群员禁言         setGroupBan
-        122,   //置群管理员         setGroupAdmin
-        123,   //置全群禁言         setGroupWholeBan
-        124,   //置匿名群员禁言     setGroupAnonymousBan
-        125,   //置群匿名设置       setGroupAnonymous
-        126,   //置群成员名片       setGroupCard
-        //127, //[敏感]置群退出     setGroupLeave
-        128,   //置群成员专属头衔   setGroupSpecialTitle
-        130,   //取群成员信息       getGroupMemberInfo
-        131,   //取陌生人信息       getStrangerInfo
-        132,   //取群信息           getGroupInfo
-        140,   //置讨论组退出       setDiscussLeave
-        150,   //置好友添加请求     setFriendAddRequest
-        151,   //置群添加请求       setGroupAddRequest
-        160,   //取群成员列表       getGroupMemberList
-        161,   //取群列表           getGroupList
-        162,   //取好友列表         getFriendList
-        180    //撤回消息           deleteMsg
-    ]
+	"ret": 1,
+	"apiver": 9,
+	"appid": "your.app.id",
+	"name": "插件名称",
+	"version": "1.0.0",
+	"version_id": 1,
+	"author": "插件作者姓名",
+	"description": "您插件的简介",
+	"event": [
+		{
+			"name": "插件启用",
+			"function": "EVENT_ON_ENABLE",
+			"type": 1003,
+			"priority": 20000,
+			"id": 1003
+		}
+	],
+	"auth": null,
+	"menu": [],
+	"status": []
 }
