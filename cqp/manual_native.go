@@ -19,8 +19,8 @@ func GetFriendList() []FriendInfo {
 	return list
 }
 
-func GetGroupInfo(group int64, noCatch bool) GroupDetail {
-	raw := getRawGroupInfo(group, noCatch)
+func GetGroupInfo(group int64, noCache bool) GroupDetail {
+	raw := getRawGroupInfo(group, noCache)
 	info, err := UnpackGroupInfo(raw)
 	if err != nil {
 		panic(unpackError{API: "群信息", Raw: raw, Err: err})
@@ -39,8 +39,8 @@ func GetGroupList() []GroupInfo {
 }
 
 // GetGroupMemberInfo 获取群成员信息
-func GetGroupMemberInfo(group, qq int64, noCatch bool) GroupMember {
-	raw := getRawGroupMemberInfoV2(group, qq, noCatch)
+func GetGroupMemberInfo(group, qq int64, noCache bool) GroupMember {
+	raw := getRawGroupMemberInfoV2(group, qq, noCache)
 	member, err := UnpackGroupMemberInfo(raw)
 	if err != nil {
 		panic(unpackError{API: "群成员信息", Raw: raw, Err: err})
@@ -59,9 +59,9 @@ func GetGroupMemberList(group int64) []GroupMember {
 }
 
 // GetStrangerInfo 获取陌生人信息
-// noCatch指定是否使用缓存
-func GetStrangerInfo(qq int64, noCatch bool) StrangerInfo {
-	raw := getRawStrangerInfo(qq, noCatch)
+// noCache指定是否使用缓存
+func GetStrangerInfo(qq int64, noCache bool) StrangerInfo {
+	raw := getRawStrangerInfo(qq, noCache)
 	info, err := UnpackStrangerInfo(raw)
 	if err != nil {
 		panic(unpackError{API: "陌生人信息", Raw: raw, Err: err})
