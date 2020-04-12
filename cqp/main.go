@@ -46,4 +46,8 @@ var GroupMemberDecrease func(subType, sendTime int32, fromGroup, fromQQ, beingOp
 var GroupMemberIncrease func(subType, sendTime int32, fromGroup, fromQQ, beingOperateQQ int64) int32
 var FriendAdd func(subType, sendTime int32, fromQQ int64) int32
 var FriendRequest func(subType, sendTime int32, fromQQ int64, msg, responseFlag string) int32
+
+// GroupRequest 在机器人收到群请求时被调用
+//
+// PC端在线时酷Q不会收到群请求
 var GroupRequest func(subType, sendTime int32, fromGroup, fromQQ int64, msg, responseFlag string) int32
