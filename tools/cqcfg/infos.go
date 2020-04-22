@@ -19,13 +19,18 @@ var info = struct {
 	Events []event `json:"event"`
 	Auth   []int   `json:"auth"`
 
-	Menu   []interface{} `json:"menu"`
+	Menu   []menu        `json:"menu"`
 	Status []interface{} `json:"status"`
 }{
 	Ret:    1,
 	APIver: 9,
-	Menu:   []interface{}{},
+	Menu:   []menu{},
 	Status: []interface{}{},
+}
+
+type menu struct {
+	Name string `json:"name"`
+	Func string `json:"function"`
 }
 
 // 读取注释
@@ -59,6 +64,12 @@ func onComm(comm string) { //处理cqp注释
 		}
 	case strings.HasPrefix(comm, "// cqp: 简介: "):
 		info.Desc = strings.TrimPrefix(comm, "// cqp: 简介: ")
+	case strings.HasPrefix(comm, "// cqp: 菜单:"):
+		var m menu
+		if _, err := fmt.Sscan(strings.TrimPrefix(comm, "// cqp: 菜单:"), &m.Name, &m.Func); err != nil {
+			log.Fatal("无法解析菜单指令:", err)
+		}
+		info.Menu = append(info.Menu, m)
 	}
 
 }
