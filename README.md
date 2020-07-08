@@ -23,7 +23,7 @@
 ## 使用方法
 1. 使用[模板](https://github.com/Tnze/CoolQ-Golang-Plugin)创建你的插件👉[![UseTemplate](https://img.shields.io/badge/-Use_Template-success)](https://github.com/Tnze/CoolQ-Golang-Plugin/generate)
 1. 查看模板的README
-1. 参考[官方教程](https://d.cqp.me/Pro/开发/快速入门)学习插件调试、打包等方法
+1. 参考[官方教程](https://docs.cqp.im/dev/v9/getting-started/)学习插件调试、打包等方法
 
 ## 编译
 
