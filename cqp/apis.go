@@ -67,6 +67,12 @@ func SetDiscussLeave(discuss int64) int32 { return setDiscussLeave(discuss) }
 func SetFriendAddRequest(code string, Type int32, remark string) int32 {
 	return setFriendAddRequest(code, Type, remark)
 }
+
+// SetGroupAddRequest 响应群组申请
+// ReqFeedback 请传入群组请求事件(GroupRequest)中收到的responseFlag。
+// ReqType 请传入群组请求事件(GroupRequest)中收到的subType。
+// FeedbackType 是否同意请求，同意:1，拒绝:2。
+// reason 拒绝入群请求说明，仅在 拒绝入群请求 时有效
 func SetGroupAddRequest(ReqFeedback string, ReqType, FeedbackType int32, reason string) int32 {
 	return setGroupAddRequestV2(ReqFeedback, ReqType, FeedbackType, reason)
 }
