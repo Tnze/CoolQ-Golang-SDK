@@ -48,6 +48,8 @@ var FriendAdd func(subType, sendTime int32, fromQQ int64) int32
 var FriendRequest func(subType, sendTime int32, fromQQ int64, msg, responseFlag string) int32
 
 // GroupRequest 在机器人收到群请求时被调用
-//
+// subType为请求子类型, 可选的值有, 1：加群请求 2: 登录号被邀请入群
+// msg 加群请求的验证问答, 若subType为2时通常为空字符串
+// responseFlag 请求flag, 在调用处理请求api时需传入
 // PC端在线时酷Q不会收到群请求
 var GroupRequest func(subType, sendTime int32, fromGroup, fromQQ int64, msg, responseFlag string) int32
